@@ -1,0 +1,120 @@
+# Cebuano translations for Neural Accord.
+# Copyright (C) 2026 Neural Accord contributors
+# This file is distributed under the same license as the Neural Accord
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Neural Accord 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-08-12 06:56+0800\n"
+"PO-Revision-Date: 2026-08-12 06:55+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ceb\n"
+"Language-Team: ceb <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: core/cli.py:31
+msgid "Run reproducible experiments under declared biological constraints."
+msgstr "Padagana ang mabalik-balik nga mga eksperimento ubos sa gideklarar nga biyolohikal nga mga kutub."
+
+#: core/cli.py:40
+msgid "LOCALE"
+msgstr "PINULONGAN"
+
+#: core/cli.py:41
+msgid ""
+"Language for messages, e.g. 'de' or 'zh-Hans'. Defaults to your "
+"environment."
+msgstr "Pinulongan sa mga mensahe, pananglitan 'de' o 'zh-Hans'. Sa default, gikan sa imong palibot."
+
+#: core/cli.py:48
+msgid "Run a biological experiment from a versioned YAML declaration."
+msgstr "Padagana ang usa ka biyolohikal nga eksperimento gikan sa bersiyonadong deklarasyon nga YAML."
+
+#: core/cli.py:50 core/cli.py:63
+msgid "CONFIG"
+msgstr "CONFIG"
+
+#: core/cli.py:55 core/cli.py:68
+msgid "N"
+msgstr "N"
+
+#: core/cli.py:56 core/cli.py:69
+msgid "Seed to run. Repeat the option to run a seed list."
+msgstr "Ang seed nga padaganon. Balika ang opsyon aron makapadagan ug listahan sa mga seed."
+
+#: core/cli.py:61
+msgid "Evaluate calibration burden on a chronological cross-session split."
+msgstr "Timbanga ang gibug-aton sa kalibrasyon sa usa ka kronolohikanhong bahin tali sa mga sesyon."
+
+#: core/cli.py:77
+#, python-brace-format
+msgid "Experiment declaration: {path}"
+msgstr "Deklarasyon sa eksperimento: {path}"
+
+#: core/cli.py:80
+#, python-brace-format
+msgid "Seeds requested: {count}"
+msgstr "Gihangyo nga mga seed: {count}"
+
+#: core/cli.py:82
+msgid "No seed given; a reported result requires a seed list, not one best run."
+msgstr "Walay gihatag nga seed; ang gitaho nga resulta nagkinahanglan ug listahan sa mga seed, dili usa lang ka labing maayong pagdagan."
+
+#: core/cli.py:97
+#, python-brace-format
+msgid "Configuration error: {reason}"
+msgstr "Sayop sa konpigurasyon: {reason}"
+
+#: core/cli.py:102
+#, python-brace-format
+msgid "Declared fidelity level: {level}"
+msgstr "Gideklarar nga lebel sa fidelity: {level}"
+
+#: core/cli.py:106
+msgid ""
+"Execution is not implemented yet. This release scaffolds the "
+"reproducibility contract only; see docs/validation.md for what a result "
+"must carry before it can be reported."
+msgstr "Wala pa matuman ang aktuwal nga pagpadagan. Kini nga release nag-andam lang sa kontrata sa pagka-mabalik-balik; tan-awa ang docs/validation.md kon unsa ang kinahanglang dad-on sa usa ka resulta sa dili pa kini itaho."
+
+#: core/config.py:31
+#, python-brace-format
+msgid "No experiment declaration at {path}."
+msgstr "Walay deklarasyon sa eksperimento sa {path}."
+
+#: core/config.py:36
+#, python-brace-format
+msgid "{path} is not valid YAML: {reason}"
+msgstr "Ang {path} dili balido nga YAML: {reason}"
+
+#: core/config.py:39
+#, python-brace-format
+msgid "{path} must contain a YAML mapping at the top level."
+msgstr "Ang {path} kinahanglan adunay YAML nga mapping sa kinatas-ang lebel."
+
+#: core/config.py:43
+#, python-brace-format
+msgid "{path} is missing an 'experiment' block."
+msgstr "Ang {path} kulang sa bloke nga 'experiment'."
+
+#: core/config.py:46
+msgid "The 'experiment' block must declare an 'id'."
+msgstr "Ang bloke nga 'experiment' kinahanglan magdeklarar ug 'id'."
+
+#: core/config.py:51
+#, python-brace-format
+msgid "Unknown fidelity level {level!r}; expected one of 0, 1, 2, 3, 4."
+msgstr "Wala mailhi nga lebel sa fidelity nga {level!r}; gipaabot ang usa sa 0, 1, 2, 3, 4."
+
+#~ msgid ""
+#~ "Language for messages, e.g. 'de' or "
+#~ "'pt-BR'. Defaults to your environment."
+#~ msgstr ""
+

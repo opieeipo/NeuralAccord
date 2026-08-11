@@ -1,0 +1,120 @@
+# Portuguese translations for Neural Accord.
+# Copyright (C) 2026 Neural Accord contributors
+# This file is distributed under the same license as the Neural Accord
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Neural Accord 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-08-12 06:56+0800\n"
+"PO-Revision-Date: 2026-08-12 06:55+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: pt\n"
+"Language-Team: pt <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: core/cli.py:31
+msgid "Run reproducible experiments under declared biological constraints."
+msgstr "Executa experimentos reprodutíveis sob restrições biológicas declaradas."
+
+#: core/cli.py:40
+msgid "LOCALE"
+msgstr "IDIOMA"
+
+#: core/cli.py:41
+msgid ""
+"Language for messages, e.g. 'de' or 'zh-Hans'. Defaults to your "
+"environment."
+msgstr "Idioma das mensagens, p. ex. 'de' ou 'zh-Hans'. Por predefinição, o do seu ambiente."
+
+#: core/cli.py:48
+msgid "Run a biological experiment from a versioned YAML declaration."
+msgstr "Executa uma experiência biológica a partir de uma declaração YAML versionada."
+
+#: core/cli.py:50 core/cli.py:63
+msgid "CONFIG"
+msgstr "CONFIG"
+
+#: core/cli.py:55 core/cli.py:68
+msgid "N"
+msgstr "N"
+
+#: core/cli.py:56 core/cli.py:69
+msgid "Seed to run. Repeat the option to run a seed list."
+msgstr "Semente a executar. Repita a opção para executar uma lista de sementes."
+
+#: core/cli.py:61
+msgid "Evaluate calibration burden on a chronological cross-session split."
+msgstr "Avalia a carga de calibração numa divisão cronológica entre sessões."
+
+#: core/cli.py:77
+#, python-brace-format
+msgid "Experiment declaration: {path}"
+msgstr "Declaração da experiência: {path}"
+
+#: core/cli.py:80
+#, python-brace-format
+msgid "Seeds requested: {count}"
+msgstr "Sementes pedidas: {count}"
+
+#: core/cli.py:82
+msgid "No seed given; a reported result requires a seed list, not one best run."
+msgstr "Nenhuma semente indicada; um resultado publicado exige uma lista de sementes, não uma única melhor execução."
+
+#: core/cli.py:97
+#, python-brace-format
+msgid "Configuration error: {reason}"
+msgstr "Erro de configuração: {reason}"
+
+#: core/cli.py:102
+#, python-brace-format
+msgid "Declared fidelity level: {level}"
+msgstr "Nível de fidelidade declarado: {level}"
+
+#: core/cli.py:106
+msgid ""
+"Execution is not implemented yet. This release scaffolds the "
+"reproducibility contract only; see docs/validation.md for what a result "
+"must carry before it can be reported."
+msgstr "A execução ainda não está implementada. Esta versão apenas prepara o contrato de reprodutibilidade; consulte docs/validation.md para saber o que um resultado tem de incluir antes de ser publicado."
+
+#: core/config.py:31
+#, python-brace-format
+msgid "No experiment declaration at {path}."
+msgstr "Não existe nenhuma declaração de experiência em {path}."
+
+#: core/config.py:36
+#, python-brace-format
+msgid "{path} is not valid YAML: {reason}"
+msgstr "{path} não é YAML válido: {reason}"
+
+#: core/config.py:39
+#, python-brace-format
+msgid "{path} must contain a YAML mapping at the top level."
+msgstr "{path} tem de conter um mapeamento YAML no nível superior."
+
+#: core/config.py:43
+#, python-brace-format
+msgid "{path} is missing an 'experiment' block."
+msgstr "Falta um bloco 'experiment' em {path}."
+
+#: core/config.py:46
+msgid "The 'experiment' block must declare an 'id'."
+msgstr "O bloco 'experiment' tem de declarar um 'id'."
+
+#: core/config.py:51
+#, python-brace-format
+msgid "Unknown fidelity level {level!r}; expected one of 0, 1, 2, 3, 4."
+msgstr "Nível de fidelidade desconhecido {level!r}; esperava-se um de 0, 1, 2, 3, 4."
+
+#~ msgid ""
+#~ "Language for messages, e.g. 'de' or "
+#~ "'pt-BR'. Defaults to your environment."
+#~ msgstr ""
+

@@ -1,0 +1,73 @@
+# Mouse primary visual cortex, layer 2/3 -- evidence profile.
+#
+# Every numeric entry must carry: species, region, layer, cell/connection
+# class, experimental conditions, source, uncertainty, and an evidence label
+# from {MEASURED, MODELLED, ABSTRACTED, HYPOTHESIS}.
+#
+# This file is a SKELETON. Values are `unknown` until populated from a named
+# source. There is no mammalian default: an unpopulated value stays unknown
+# rather than borrowing from another species or another cortical area.
+
+profile:
+  id: mouse_v1_l23
+  version: 0.0.0
+  species: mouse
+  region: primary_visual_cortex
+  cortical_layer: L2_3
+  status: skeleton
+
+provenance:
+  # See docs/provenance.md for how a source is recorded.
+  primary_sources: []
+  notes: >-
+    Campagnola et al. (2022) and the Allen Institute Synaptic Physiology
+    program are the intended starting sources for local connectivity and
+    short-term dynamics. Nothing is transcribed here until each value is
+    recorded with its conditions and uncertainty.
+
+cell_classes: []
+# - id: pyr_l23
+#   evidence: MEASURED
+#   source: null
+#   conditions: null
+
+connections: []
+# - id: pyr_l23__pyr_l23
+#   pre: pyr_l23
+#   post: pyr_l23
+#   connection_probability:
+#     value: unknown
+#     uncertainty: unknown
+#     evidence: MEASURED
+#     source: null
+
+synaptic_dynamics:
+  model: tsodyks_markram_dynamic_synapse
+  release_probability:
+    value: unknown
+    uncertainty: unknown
+    evidence: MODELLED
+    source: null
+  facilitation_tau:
+    value: unknown
+    uncertainty: unknown
+    evidence: MODELLED
+    source: null
+  depression_tau:
+    value: unknown
+    uncertainty: unknown
+    evidence: MODELLED
+    source: null
+
+validation_targets:
+  # What a run of this profile is checked against. Biological validation error
+  # is reported per target, not as a single aggregate.
+  firing_rate: unknown
+  connection_probability: unknown
+  short_term_plasticity: unknown
+
+declared_omissions:
+  - neuromodulation
+  - glial contributions
+  - dendritic nonlinearity
+  - developmental time course

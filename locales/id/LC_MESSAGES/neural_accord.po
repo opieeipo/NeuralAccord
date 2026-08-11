@@ -1,0 +1,120 @@
+# Indonesian translations for Neural Accord.
+# Copyright (C) 2026 Neural Accord contributors
+# This file is distributed under the same license as the Neural Accord
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Neural Accord 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-08-12 06:56+0800\n"
+"PO-Revision-Date: 2026-08-12 06:54+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: id\n"
+"Language-Team: id <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: core/cli.py:31
+msgid "Run reproducible experiments under declared biological constraints."
+msgstr "Jalankan eksperimen yang dapat direproduksi di bawah batasan biologis yang dideklarasikan."
+
+#: core/cli.py:40
+msgid "LOCALE"
+msgstr "BAHASA"
+
+#: core/cli.py:41
+msgid ""
+"Language for messages, e.g. 'de' or 'zh-Hans'. Defaults to your "
+"environment."
+msgstr "Bahasa untuk pesan, mis. 'de' atau 'zh-Hans'. Bawaannya mengikuti lingkungan Anda."
+
+#: core/cli.py:48
+msgid "Run a biological experiment from a versioned YAML declaration."
+msgstr "Jalankan eksperimen biologis dari deklarasi YAML berversi."
+
+#: core/cli.py:50 core/cli.py:63
+msgid "CONFIG"
+msgstr "KONFIG"
+
+#: core/cli.py:55 core/cli.py:68
+msgid "N"
+msgstr "N"
+
+#: core/cli.py:56 core/cli.py:69
+msgid "Seed to run. Repeat the option to run a seed list."
+msgstr "Seed yang dijalankan. Ulangi opsi ini untuk menjalankan daftar seed."
+
+#: core/cli.py:61
+msgid "Evaluate calibration burden on a chronological cross-session split."
+msgstr "Evaluasi beban kalibrasi pada pembagian lintas sesi secara kronologis."
+
+#: core/cli.py:77
+#, python-brace-format
+msgid "Experiment declaration: {path}"
+msgstr "Deklarasi eksperimen: {path}"
+
+#: core/cli.py:80
+#, python-brace-format
+msgid "Seeds requested: {count}"
+msgstr "Seed yang diminta: {count}"
+
+#: core/cli.py:82
+msgid "No seed given; a reported result requires a seed list, not one best run."
+msgstr "Tidak ada seed yang diberikan; hasil yang dilaporkan memerlukan daftar seed, bukan satu proses terbaik."
+
+#: core/cli.py:97
+#, python-brace-format
+msgid "Configuration error: {reason}"
+msgstr "Kesalahan konfigurasi: {reason}"
+
+#: core/cli.py:102
+#, python-brace-format
+msgid "Declared fidelity level: {level}"
+msgstr "Tingkat fidelitas yang dideklarasikan: {level}"
+
+#: core/cli.py:106
+msgid ""
+"Execution is not implemented yet. This release scaffolds the "
+"reproducibility contract only; see docs/validation.md for what a result "
+"must carry before it can be reported."
+msgstr "Eksekusi belum diimplementasikan. Rilis ini hanya menyiapkan kerangka kontrak reproduktibilitas; lihat docs/validation.md untuk apa yang harus disertakan sebuah hasil sebelum dilaporkan."
+
+#: core/config.py:31
+#, python-brace-format
+msgid "No experiment declaration at {path}."
+msgstr "Tidak ada deklarasi eksperimen di {path}."
+
+#: core/config.py:36
+#, python-brace-format
+msgid "{path} is not valid YAML: {reason}"
+msgstr "{path} bukan YAML yang valid: {reason}"
+
+#: core/config.py:39
+#, python-brace-format
+msgid "{path} must contain a YAML mapping at the top level."
+msgstr "{path} harus berisi pemetaan YAML di tingkat teratas."
+
+#: core/config.py:43
+#, python-brace-format
+msgid "{path} is missing an 'experiment' block."
+msgstr "{path} tidak memiliki blok 'experiment'."
+
+#: core/config.py:46
+msgid "The 'experiment' block must declare an 'id'."
+msgstr "Blok 'experiment' harus mendeklarasikan 'id'."
+
+#: core/config.py:51
+#, python-brace-format
+msgid "Unknown fidelity level {level!r}; expected one of 0, 1, 2, 3, 4."
+msgstr "Tingkat fidelitas tidak dikenal {level!r}; diharapkan salah satu dari 0, 1, 2, 3, 4."
+
+#~ msgid ""
+#~ "Language for messages, e.g. 'de' or "
+#~ "'pt-BR'. Defaults to your environment."
+#~ msgstr ""
+

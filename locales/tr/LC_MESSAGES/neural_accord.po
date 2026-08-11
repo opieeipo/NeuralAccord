@@ -1,0 +1,120 @@
+# Turkish translations for Neural Accord.
+# Copyright (C) 2026 Neural Accord contributors
+# This file is distributed under the same license as the Neural Accord
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Neural Accord 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-08-12 06:56+0800\n"
+"PO-Revision-Date: 2026-08-12 06:54+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: tr\n"
+"Language-Team: tr <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: core/cli.py:31
+msgid "Run reproducible experiments under declared biological constraints."
+msgstr "Bildirilen biyolojik kısıtlar altında yeniden üretilebilir deneyler çalıştırın."
+
+#: core/cli.py:40
+msgid "LOCALE"
+msgstr "DİL"
+
+#: core/cli.py:41
+msgid ""
+"Language for messages, e.g. 'de' or 'zh-Hans'. Defaults to your "
+"environment."
+msgstr "İletilerin dili, ör. 'de' veya 'zh-Hans'. Varsayılan olarak ortamınızdan alınır."
+
+#: core/cli.py:48
+msgid "Run a biological experiment from a versioned YAML declaration."
+msgstr "Sürümlenmiş bir YAML bildiriminden biyolojik deney çalıştırın."
+
+#: core/cli.py:50 core/cli.py:63
+msgid "CONFIG"
+msgstr "YAPILANDIRMA"
+
+#: core/cli.py:55 core/cli.py:68
+msgid "N"
+msgstr "N"
+
+#: core/cli.py:56 core/cli.py:69
+msgid "Seed to run. Repeat the option to run a seed list."
+msgstr "Çalıştırılacak tohum. Tohum listesi çalıştırmak için seçeneği yineleyin."
+
+#: core/cli.py:61
+msgid "Evaluate calibration burden on a chronological cross-session split."
+msgstr "Kronolojik oturumlar arası bölmede kalibrasyon yükünü değerlendirin."
+
+#: core/cli.py:77
+#, python-brace-format
+msgid "Experiment declaration: {path}"
+msgstr "Deney bildirimi: {path}"
+
+#: core/cli.py:80
+#, python-brace-format
+msgid "Seeds requested: {count}"
+msgstr "İstenen tohumlar: {count}"
+
+#: core/cli.py:82
+msgid "No seed given; a reported result requires a seed list, not one best run."
+msgstr "Tohum verilmedi; raporlanan bir sonuç tek bir en iyi çalıştırmayı değil, bir tohum listesini gerektirir."
+
+#: core/cli.py:97
+#, python-brace-format
+msgid "Configuration error: {reason}"
+msgstr "Yapılandırma hatası: {reason}"
+
+#: core/cli.py:102
+#, python-brace-format
+msgid "Declared fidelity level: {level}"
+msgstr "Bildirilen doğruluk düzeyi: {level}"
+
+#: core/cli.py:106
+msgid ""
+"Execution is not implemented yet. This release scaffolds the "
+"reproducibility contract only; see docs/validation.md for what a result "
+"must carry before it can be reported."
+msgstr "Yürütme henüz uygulanmadı. Bu sürüm yalnızca yeniden üretilebilirlik sözleşmesinin iskeletini kurar; bir sonucun raporlanmadan önce neleri taşıması gerektiği için docs/validation.md dosyasına bakın."
+
+#: core/config.py:31
+#, python-brace-format
+msgid "No experiment declaration at {path}."
+msgstr "{path} konumunda deney bildirimi yok."
+
+#: core/config.py:36
+#, python-brace-format
+msgid "{path} is not valid YAML: {reason}"
+msgstr "{path} geçerli bir YAML değil: {reason}"
+
+#: core/config.py:39
+#, python-brace-format
+msgid "{path} must contain a YAML mapping at the top level."
+msgstr "{path} en üst düzeyde bir YAML eşlemesi içermelidir."
+
+#: core/config.py:43
+#, python-brace-format
+msgid "{path} is missing an 'experiment' block."
+msgstr "{path} dosyasında 'experiment' bloğu eksik."
+
+#: core/config.py:46
+msgid "The 'experiment' block must declare an 'id'."
+msgstr "'experiment' bloğu bir 'id' bildirmelidir."
+
+#: core/config.py:51
+#, python-brace-format
+msgid "Unknown fidelity level {level!r}; expected one of 0, 1, 2, 3, 4."
+msgstr "Bilinmeyen doğruluk düzeyi {level!r}; 0, 1, 2, 3, 4 değerlerinden biri bekleniyordu."
+
+#~ msgid ""
+#~ "Language for messages, e.g. 'de' or "
+#~ "'pt-BR'. Defaults to your environment."
+#~ msgstr ""
+

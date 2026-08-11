@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780" role="img" aria-labelledby="title desc">
+  <title id="title">Synaptic Emergence: comparative mouse and human cortical coordination architecture</title>
+  <desc id="desc">A conceptual diagram showing mouse and human cortical population models interacting through stochastic plastic synaptic interfaces, a partially shared environment, and an external developmental archive.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#102a3a"/></linearGradient>
+    <linearGradient id="mouse" x1="0" x2="1"><stop stop-color="#3bb7a4"/><stop offset="1" stop-color="#8ae0cc"/></linearGradient>
+    <linearGradient id="human" x1="0" x2="1"><stop stop-color="#d79049"/><stop offset="1" stop-color="#ffd38f"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .h{font-family:Arial,Helvetica,sans-serif;fill:#ecf5f8}.s{font-family:Arial,Helvetica,sans-serif;fill:#9fc0ca}.k{font-family:Arial,Helvetica,sans-serif;fill:#07111f;font-weight:700}.panel{fill:#0c1b2d;stroke:#36566a;stroke-width:2}.wire{fill:none;stroke:#86a9b6;stroke-width:2;opacity:.72}.syn{fill:#8be0d0;stroke:#d9fff8;stroke-width:1}.inh{fill:#8192ef;stroke:#dce1ff;stroke-width:1}.dash{fill:none;stroke:#d9fff8;stroke-width:2;stroke-dasharray:7 8}.small{font:15px Arial,Helvetica,sans-serif;fill:#b8d0d6}.label{font:700 18px Arial,Helvetica,sans-serif;fill:#f3fbfc}.tiny{font:12px Arial,Helvetica,sans-serif;fill:#b8d0d6}
+    </style>
+  </defs>
+  <rect width="1400" height="780" fill="url(#bg)"/>
+  <text x="700" y="48" text-anchor="middle" class="h" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="700">SYNAPTIC EMERGENCE</text>
+  <text x="700" y="75" text-anchor="middle" class="s" font-size="16">Comparative, traceable coordination under species-specific neural constraints</text>
+
+  <rect x="45" y="120" width="435" height="405" rx="22" class="panel"/>
+  <rect x="920" y="120" width="435" height="405" rx="22" class="panel"/>
+  <text x="75" y="158" class="label">MOUSE CORTICAL MODEL</text>
+  <text x="75" y="183" class="small">Initial mechanistic baseline · e.g., V1 L2/3</text>
+  <text x="950" y="158" class="label">HUMAN CORTICAL MODEL</text>
+  <text x="950" y="183" class="small">Comparative constraint · cortical tissue data</text>
+
+  <g transform="translate(95 226)" filter="url(#glow)">
+    <path d="M95 160 C92 113 83 83 48 30 M95 160 C106 112 130 82 160 34 M95 160 C75 134 42 126 15 112 M95 160 C119 133 158 130 183 115 M95 160 C86 194 58 210 29 231 M95 160 C108 194 145 211 175 231" class="wire" stroke="#74d7c4" stroke-width="5"/>
+    <circle cx="95" cy="160" r="22" fill="url(#mouse)" stroke="#e3fff9" stroke-width="2"/>
+    <circle cx="18" cy="111" r="8" class="syn"/><circle cx="47" cy="30" r="8" class="syn"/><circle cx="160" cy="34" r="8" class="syn"/><circle cx="184" cy="115" r="8" class="syn"/><circle cx="29" cy="231" r="8" class="syn"/><circle cx="175" cy="231" r="8" class="syn"/>
+    <text x="95" y="287" text-anchor="middle" class="small">excitatory pyramidal population</text>
+  </g>
+  <g transform="translate(315 302)">
+    <path d="M42 65 C13 41 12 20 25 3 M42 65 C67 44 74 20 62 2 M42 65 C15 85 10 109 23 128 M42 65 C70 90 79 108 65 128" fill="none" stroke="#9caaff" stroke-width="4"/>
+    <circle cx="42" cy="65" r="17" class="inh"/>
+    <text x="42" y="160" text-anchor="middle" class="tiny">inhibitory</text>
+  </g>
+
+  <g transform="translate(970 205)" filter="url(#glow)">
+    <path d="M116 205 C105 130 92 73 36 18 M116 205 C121 128 158 75 214 16 M116 205 C85 159 33 140 8 104 M116 205 C151 159 210 141 240 102 M116 205 C100 253 69 280 29 308 M116 205 C138 252 183 279 229 305" class="wire" stroke="#ffd08a" stroke-width="6"/>
+    <path d="M116 205 C110 111 114 60 124 3" class="wire" stroke="#ffd08a" stroke-width="4"/>
+    <circle cx="116" cy="205" r="27" fill="url(#human)" stroke="#fff4d5" stroke-width="2"/>
+    <circle cx="8" cy="104" r="9" fill="#ffcf84" stroke="#fff4d5"/><circle cx="36" cy="18" r="9" fill="#ffcf84" stroke="#fff4d5"/><circle cx="124" cy="3" r="9" fill="#ffcf84" stroke="#fff4d5"/><circle cx="214" cy="16" r="9" fill="#ffcf84" stroke="#fff4d5"/><circle cx="240" cy="102" r="9" fill="#ffcf84" stroke="#fff4d5"/><circle cx="29" cy="308" r="9" fill="#ffcf84" stroke="#fff4d5"/><circle cx="229" cy="305" r="9" fill="#ffcf84" stroke="#fff4d5"/>
+    <text x="116" y="358" text-anchor="middle" class="small">comparative pyramidal population</text>
+  </g>
+  <g transform="translate(1235 301)">
+    <path d="M42 65 C13 41 12 20 25 3 M42 65 C67 44 74 20 62 2 M42 65 C15 85 10 109 23 128 M42 65 C70 90 79 108 65 128" fill="none" stroke="#9caaff" stroke-width="4"/>
+    <circle cx="42" cy="65" r="17" class="inh"/>
+    <text x="42" y="160" text-anchor="middle" class="tiny">inhibitory</text>
+  </g>
+
+  <rect x="525" y="205" width="350" height="235" rx="26" fill="#123a43" stroke="#69d6c6" stroke-width="2"/>
+  <text x="700" y="243" text-anchor="middle" class="label">STOCHASTIC · PLASTIC INTERFACE</text>
+  <text x="700" y="273" text-anchor="middle" class="small">quantal release · timing · short-term dynamics</text>
+  <text x="700" y="298" text-anchor="middle" class="small">local plasticity · noise · delay · interference</text>
+  <g transform="translate(590 338)">
+    <circle cx="0" cy="0" r="9" class="syn"/><path d="M15 0 H80" class="dash"/><circle cx="95" cy="0" r="9" class="syn"/><path d="M110 0 H175" class="dash"/><circle cx="190" cy="0" r="9" class="syn"/>
+    <text x="95" y="34" text-anchor="middle" class="tiny">probabilistic transmission events</text>
+  </g>
+  <path d="M480 315 H525" class="dash" marker-end="url(#arrow)"/><path d="M875 315 H920" class="dash"/>
+
+  <rect x="220" y="585" width="960" height="85" rx="22" fill="#173047" stroke="#4d7f91" stroke-width="2"/>
+  <text x="700" y="620" text-anchor="middle" class="label">PARTIALLY SHARED ENVIRONMENT AND COORDINATION TASK</text>
+  <text x="700" y="647" text-anchor="middle" class="small">overlapping observations · action-dependent reward · perturbation and recovery assays</text>
+  <path d="M270 585 C270 544 200 525 180 496" class="wire" stroke="#74d7c4"/><path d="M1130 585 C1130 544 1200 525 1220 496" class="wire" stroke="#ffd08a"/>
+
+  <rect x="330" y="704" width="740" height="48" rx="15" fill="#26364b" stroke="#7791a8"/>
+  <text x="700" y="735" text-anchor="middle" class="small">EXTERNAL DEVELOPMENTAL ARCHIVE · activity · connectivity · plasticity · perturbations · outcomes</text>
+</svg>

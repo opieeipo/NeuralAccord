@@ -1,0 +1,4 @@
+Human comparative experiment declarations land here, mirroring configs/mouse/
+so the same experimental structure runs under measured human constraints with
+explicit uncertainty ranges. Empty until profiles/human/v1_l23.yaml carries
+real values.

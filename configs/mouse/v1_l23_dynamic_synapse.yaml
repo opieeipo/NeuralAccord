@@ -1,0 +1,40 @@
+# neural-accord run configs/mouse/v1_l23_dynamic_synapse.yaml --seed 1042
+#
+# Level 1: replace fixed transmission errors with activity-dependent release
+# while holding task and reporting structure constant.
+
+experiment:
+  id: mouse_v1_l23_noise_001
+  seed: 1042
+  fidelity_level: 1
+
+biology:
+  species: mouse
+  region: primary_visual_cortex
+  cortical_layer: L2_3
+  evidence_profile: profiles/mouse/v1_l23.yaml
+  parameter_policy: measured_or_explicit_uncertainty
+
+synapse:
+  model: tsodyks_markram_dynamic_synapse
+  release_probability: sampled_from_profile
+  facilitation: enabled
+  depression: enabled
+
+learning:
+  local_rule: reward_modulated_stdp
+  homeostasis: enabled
+
+trace:
+  level: full
+  checkpoints_every: 1000
+
+# Required by the reproducibility contract: a result is reported across a seed
+# list with seed-level outcomes and variance, never as one best run.
+seeds: [1042, 1043, 1044, 1045, 1046]
+
+controls:
+  - no_communication
+  - randomized_communication
+  - fully_shared_observations
+  - matched_fixed_noise

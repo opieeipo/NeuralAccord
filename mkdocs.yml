@@ -1,0 +1,20 @@
+site_name: Neural Accord
+site_description: >-
+  An open research platform for investigating how adaptive coordination
+  develops, persists, and becomes historically opaque under biologically
+  motivated neural constraints.
+repo_url: https://github.com/opieeipo/NeuralAccord
+theme:
+  name: material
+nav:
+  - Overview: index.md
+  - Provenance: provenance.md
+  - Biological constraints: biological-constraints.md
+  - Abstraction boundaries: abstraction-boundaries.md
+  - Hypotheses: hypotheses.md
+  - Validation: validation.md
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true

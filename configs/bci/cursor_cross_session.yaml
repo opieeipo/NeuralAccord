@@ -1,0 +1,49 @@
+# neural-accord bci-evaluate configs/bci/cursor_cross_session.yaml --seed 1042
+#
+# Level 4: chronological cross-session calibration burden. No random
+# intermixing of future and historical trials.
+
+experiment:
+  id: cursor_cross_session_001
+  fidelity_level: 4
+  seed: 1042
+
+bci:
+  data_source: nwb_or_approved_adapter
+  task: cursor_2d
+  evaluation: chronological_cross_session
+  historical_sessions: [session_01, session_02, session_03]
+  current_session: session_04
+  features: threshold_crossings_or_spike_rates
+  closed_loop_simulation: required
+
+calibration:
+  label_budget:
+    unit: trials
+    values: [0, 5, 10, 25, 50, 100]
+  performance_threshold:
+    metric: target_acquisition_rate
+    value: 0.80
+  adaptation_allowed: true
+
+baselines:
+  - fixed_historical_decoder
+  - current_session_supervised_decoder
+  - declared_linear_or_kalman_decoder
+  - declared_domain_adaptation_baseline
+  - neural_accord_coadaptive_decoder
+
+perturbations:
+  - drift
+  - channel_loss
+  - feature_degradation
+
+# Dataset access terms are declared, not assumed. Controlled data are read from
+# a local path the operator is already permitted to hold; nothing here causes
+# redistribution.
+data_access:
+  agreement: unknown
+  redistribution_permitted: false
+  manifest: unknown
+
+seeds: [1042, 1043, 1044, 1045, 1046]

@@ -1,0 +1,3 @@
+Generated calibration-burden reports land here. Reports are build artifacts:
+they are produced from a versioned YAML declaration and a seed manifest, and
+are not hand-edited. See docs/validation.md for what each report must contain.

@@ -1,0 +1,61 @@
+# Human cortex, layer 2/3 -- comparative evidence profile.
+#
+# This profile exists to test transfer, not to assume mouse is an
+# interchangeable human proxy. Viable human tissue is more limited than mouse
+# tissue, so more entries here will legitimately remain `unknown`.
+#
+# A missing human parameter is recorded as one of:
+#   unknown                        -- no usable source
+#   inferred                       -- derived, with the derivation documented
+#   mouse_prior_for_sensitivity_only  -- borrowed ONLY to bound a sensitivity
+#                                        analysis, never reported as a human
+#                                        measurement
+# It is never silently copied from the mouse profile.
+
+profile:
+  id: human_l23
+  version: 0.0.0
+  species: human
+  region: cortex
+  cortical_layer: L2_3
+  status: skeleton
+
+provenance:
+  primary_sources: []
+  notes: >-
+    Comparative cortical datasets show mouse and human local connectivity and
+    synaptic dynamics differ. Any value transcribed here records the tissue
+    source, donor context, and recording conditions.
+
+cell_classes: []
+
+connections: []
+
+synaptic_dynamics:
+  model: tsodyks_markram_dynamic_synapse
+  release_probability:
+    value: unknown
+    uncertainty: unknown
+    evidence: MODELLED
+    source: null
+  facilitation_tau:
+    value: unknown
+    uncertainty: unknown
+    evidence: MODELLED
+    source: null
+  depression_tau:
+    value: unknown
+    uncertainty: unknown
+    evidence: MODELLED
+    source: null
+
+validation_targets:
+  firing_rate: unknown
+  connection_probability: unknown
+  short_term_plasticity: unknown
+
+declared_omissions:
+  - neuromodulation
+  - glial contributions
+  - dendritic nonlinearity
+  - donor-to-donor variability beyond the recorded uncertainty

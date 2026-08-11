@@ -1,0 +1,120 @@
+# Greek translations for Neural Accord.
+# Copyright (C) 2026 Neural Accord contributors
+# This file is distributed under the same license as the Neural Accord
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Neural Accord 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-08-12 06:56+0800\n"
+"PO-Revision-Date: 2026-08-12 06:55+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: core/cli.py:31
+msgid "Run reproducible experiments under declared biological constraints."
+msgstr "Εκτέλεση αναπαραγώγιμων πειραμάτων υπό δηλωμένους βιολογικούς περιορισμούς."
+
+#: core/cli.py:40
+msgid "LOCALE"
+msgstr "ΓΛΩΣΣΑ"
+
+#: core/cli.py:41
+msgid ""
+"Language for messages, e.g. 'de' or 'zh-Hans'. Defaults to your "
+"environment."
+msgstr "Γλώσσα των μηνυμάτων, π.χ. 'de' ή 'zh-Hans'. Εξ ορισμού από το περιβάλλον σας."
+
+#: core/cli.py:48
+msgid "Run a biological experiment from a versioned YAML declaration."
+msgstr "Εκτέλεση βιολογικού πειράματος από δήλωση YAML με έκδοση."
+
+#: core/cli.py:50 core/cli.py:63
+msgid "CONFIG"
+msgstr "ΡΥΘΜΙΣΗ"
+
+#: core/cli.py:55 core/cli.py:68
+msgid "N"
+msgstr "N"
+
+#: core/cli.py:56 core/cli.py:69
+msgid "Seed to run. Repeat the option to run a seed list."
+msgstr "Ο σπόρος που θα εκτελεστεί. Επαναλάβετε την επιλογή για λίστα σπόρων."
+
+#: core/cli.py:61
+msgid "Evaluate calibration burden on a chronological cross-session split."
+msgstr "Αξιολόγηση του φόρτου βαθμονόμησης σε χρονολογικό διαχωρισμό μεταξύ συνεδριών."
+
+#: core/cli.py:77
+#, python-brace-format
+msgid "Experiment declaration: {path}"
+msgstr "Δήλωση πειράματος: {path}"
+
+#: core/cli.py:80
+#, python-brace-format
+msgid "Seeds requested: {count}"
+msgstr "Ζητούμενοι σπόροι: {count}"
+
+#: core/cli.py:82
+msgid "No seed given; a reported result requires a seed list, not one best run."
+msgstr "Δεν δόθηκε σπόρος· ένα αναφερόμενο αποτέλεσμα απαιτεί λίστα σπόρων, όχι μία καλύτερη εκτέλεση."
+
+#: core/cli.py:97
+#, python-brace-format
+msgid "Configuration error: {reason}"
+msgstr "Σφάλμα διαμόρφωσης: {reason}"
+
+#: core/cli.py:102
+#, python-brace-format
+msgid "Declared fidelity level: {level}"
+msgstr "Δηλωμένο επίπεδο πιστότητας: {level}"
+
+#: core/cli.py:106
+msgid ""
+"Execution is not implemented yet. This release scaffolds the "
+"reproducibility contract only; see docs/validation.md for what a result "
+"must carry before it can be reported."
+msgstr "Η εκτέλεση δεν έχει υλοποιηθεί ακόμη. Αυτή η έκδοση στήνει μόνο το συμβόλαιο αναπαραγωγιμότητας· δείτε το docs/validation.md για το τι πρέπει να φέρει ένα αποτέλεσμα πριν αναφερθεί."
+
+#: core/config.py:31
+#, python-brace-format
+msgid "No experiment declaration at {path}."
+msgstr "Δεν υπάρχει δήλωση πειράματος στο {path}."
+
+#: core/config.py:36
+#, python-brace-format
+msgid "{path} is not valid YAML: {reason}"
+msgstr "Το {path} δεν είναι έγκυρο YAML: {reason}"
+
+#: core/config.py:39
+#, python-brace-format
+msgid "{path} must contain a YAML mapping at the top level."
+msgstr "Το {path} πρέπει να περιέχει αντιστοίχιση YAML στο ανώτατο επίπεδο."
+
+#: core/config.py:43
+#, python-brace-format
+msgid "{path} is missing an 'experiment' block."
+msgstr "Από το {path} λείπει ένα μπλοκ 'experiment'."
+
+#: core/config.py:46
+msgid "The 'experiment' block must declare an 'id'."
+msgstr "Το μπλοκ 'experiment' πρέπει να δηλώνει ένα 'id'."
+
+#: core/config.py:51
+#, python-brace-format
+msgid "Unknown fidelity level {level!r}; expected one of 0, 1, 2, 3, 4."
+msgstr "Άγνωστο επίπεδο πιστότητας {level!r}· αναμενόταν ένα από τα 0, 1, 2, 3, 4."
+
+#~ msgid ""
+#~ "Language for messages, e.g. 'de' or "
+#~ "'pt-BR'. Defaults to your environment."
+#~ msgstr ""
+

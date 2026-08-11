@@ -1,0 +1,34 @@
+# Comparative profile: hold task and analysis constant, change species
+# constraints.
+#
+# This profile does not average the mouse and human profiles into a mammalian
+# default. It pairs them so that a single experiment can be run twice under
+# documented, differing constraints, and reports which findings survive.
+
+profile:
+  id: comparative_mouse_human_l23
+  version: 0.0.0
+  status: skeleton
+
+arms:
+  - id: mouse
+    evidence_profile: profiles/mouse/v1_l23.yaml
+  - id: human
+    evidence_profile: profiles/human/v1_l23.yaml
+
+held_constant:
+  - task
+  - analysis
+  - metrics
+  - seed list
+  - control conditions
+
+# Parameters present in one arm and unknown in the other. Every entry here is
+# a declared limit on what the comparison can conclude (H5).
+transfer_gaps: []
+
+sensitivity_analysis:
+  # Where a human value is unknown, a mouse prior may be swept ONLY to bound
+  # sensitivity. Results from such a sweep are labeled as sensitivity bounds,
+  # never as human measurements.
+  mouse_prior_sweeps: []

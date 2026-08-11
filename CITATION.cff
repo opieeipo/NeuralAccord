@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: Neural Accord
+message: >-
+  If you use this software or its evidence profiles, please cite it using the
+  metadata below.
+type: software
+authors:
+  - name: Neural Accord contributors
+repository-code: https://github.com/opieeipo/NeuralAccord
+abstract: >-
+  An open research platform for investigating how adaptive coordination
+  develops, persists, and becomes historically opaque under biologically
+  motivated neural constraints. Spans a functional Level 0 baseline, dynamic
+  synapse models, cortical population models, persistence and developmental
+  archaeology, and a BCI co-adaptation calibration-burden benchmark.
+keywords:
+  - computational neuroscience
+  - emergent communication
+  - synaptic plasticity
+  - brain-computer interface
+  - reproducibility
+license: MIT
+version: 0.0.0
