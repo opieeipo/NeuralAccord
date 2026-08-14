@@ -68,6 +68,7 @@ cython_extensions/
 # Documentation builds
 site/
 docs/_build/
+docs/demo/_site/
 
 # --- Editors and OS ---
 .DS_Store

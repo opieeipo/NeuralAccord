@@ -1,0 +1,929 @@
+<title>Calibration Burden — Neural Accord</title>
+
+<style>
+  /* ---------------------------------------------------------------
+     Neural Accord · BCI calibration-burden explainer
+     Same tokens as the Level 0 demo and the ladder page. The
+     categorical hues here identify decoder methods; the channel
+     meanings from the demo page do not apply on this page.
+     --------------------------------------------------------------- */
+
+  :root {
+    color-scheme: light dark;
+
+    --ground:        #E9EEEF;
+    --surface:       #FBFDFD;
+    --surface-sunk:  #E1E8EA;
+    --ink:           #0E1518;
+    --ink-2:         #35474D;
+    --muted:         #5D6E73;
+    --line:          #CBD8DA;
+    --line-strong:   #A9BBBE;
+
+    --m1:            #00879B;
+    --m2:            #B07500;
+    --m3:            #A83254;
+
+    --focus:         #00879B;
+    --shadow: 0 1px 2px rgba(14,21,24,.06), 0 8px 24px -16px rgba(14,21,24,.28);
+
+    --display: "Superclarendon", "Rockwell", "Bookman Old Style", Georgia, "Times New Roman", serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    --measure: 68ch;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:        #0A1013;
+      --surface:       #111A1D;
+      --surface-sunk:  #0D1518;
+      --ink:           #E3EBEC;
+      --ink-2:         #B3C3C6;
+      --muted:         #8B9CA1;
+      --line:          #223035;
+      --line-strong:   #33454B;
+      --m1:            #1F9CA8;
+      --m2:            #C0821F;
+      --m3:            #D24A72;
+      --focus:         #35BCC8;
+      --shadow: 0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:        #0A1013;
+    --surface:       #111A1D;
+    --surface-sunk:  #0D1518;
+    --ink:           #E3EBEC;
+    --ink-2:         #B3C3C6;
+    --muted:         #8B9CA1;
+    --line:          #223035;
+    --line-strong:   #33454B;
+    --m1:            #1F9CA8;
+    --m2:            #C0821F;
+    --m3:            #D24A72;
+    --focus:         #35BCC8;
+    --shadow: 0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 74rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .masthead { display: flex; flex-direction: column; gap: 1rem; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .6rem;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .18em .5em;
+    border: 1px solid var(--m2);
+    border-radius: 2px;
+    color: var(--m2);
+    white-space: nowrap;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+
+  .standfirst { max-width: var(--measure); font-size: 1.06rem; color: var(--ink-2); margin: 0; }
+
+  .disclaimer {
+    max-width: var(--measure);
+    border-left: 2px solid var(--m2);
+    padding: .1rem 0 .1rem 1rem;
+    font-size: .93rem;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .disclaimer strong { color: var(--ink); font-weight: 600; }
+
+  section { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+    font-weight: 600;
+  }
+
+  p { margin: 0; }
+  .prose { max-width: var(--measure); color: var(--ink-2); }
+
+  /* ---------- the formula ---------- */
+
+  .formula {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    max-width: var(--measure);
+  }
+  .formula-eq {
+    font-family: var(--mono);
+    font-size: clamp(1.05rem, 2.6vw, 1.4rem);
+    color: var(--ink);
+    letter-spacing: .01em;
+  }
+  .formula-eq .lhs { color: var(--m1); }
+  .formula dl { margin: 0; display: grid; grid-template-columns: 3.2rem minmax(0, 1fr); gap: .4rem .9rem; font-size: .92rem; }
+  .formula dt { font-family: var(--mono); color: var(--m1); }
+  .formula dd { margin: 0; color: var(--ink-2); }
+
+  /* ---------- panel ---------- */
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+  }
+  .panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .85rem 1.15rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .panel-title {
+    font-family: var(--mono);
+    font-size: .74rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 600;
+  }
+  .panel-note { font-size: .8rem; color: var(--muted); margin: 0; }
+  .panel-body { padding: 1.1rem 1.15rem 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+
+  /* ---------- threshold control ---------- */
+
+  .tau {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: .75rem .9rem;
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+  }
+  .tau label { font-size: .9rem; color: var(--ink-2); white-space: nowrap; }
+  .tau output {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    min-width: 3.2rem;
+  }
+  .tau input[type="range"] { flex: 1 1 12rem; min-width: 9rem; }
+
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    height: 1.1rem; background: transparent; margin: 0; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 3px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 2px;
+  }
+  input[type="range"]::-moz-range-track {
+    height: 3px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 2px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 14px; margin-top: -6px; border-radius: 50%;
+    background: var(--m1); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--m1);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--m1); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--m1);
+  }
+  input[type="range"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- chart ---------- */
+
+  .chart-wrap { position: relative; }
+  canvas { display: block; width: 100%; }
+
+  .tip {
+    position: absolute; pointer-events: none; z-index: 5;
+    background: var(--surface); border: 1px solid var(--line-strong);
+    border-radius: 2px; box-shadow: var(--shadow);
+    padding: .45rem .6rem;
+    font-family: var(--mono); font-size: .74rem; line-height: 1.5;
+    color: var(--ink); white-space: nowrap;
+    opacity: 0; transition: opacity .09s ease;
+    font-variant-numeric: tabular-nums;
+  }
+  .tip[data-show="1"] { opacity: 1; }
+  .tip .k { color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 1rem; font-family: var(--mono); font-size: .74rem; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: .4rem; }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+  .swatch.dash { width: 14px; height: 0; border-top: 2px dashed var(--muted); border-radius: 0; }
+
+  /* ---------- burden tiles ---------- */
+
+  .burden { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; }
+  .tile {
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--line-strong);
+    border-radius: 2px;
+    padding: .7rem .8rem;
+    background: var(--surface-sunk);
+    display: flex; flex-direction: column; gap: .1rem;
+  }
+  .tile[data-m="1"] { border-top-color: var(--m1); }
+  .tile[data-m="2"] { border-top-color: var(--m2); }
+  .tile[data-m="3"] { border-top-color: var(--m3); }
+  .tile[data-m="0"] { border-top-color: var(--muted); }
+  .tile-label { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .tile-value { font-family: var(--mono); font-size: 1.5rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .tile-sub { font-family: var(--mono); font-size: .7rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .tile-value.never { font-size: 1.05rem; color: var(--m3); }
+
+  .verdict {
+    font-size: .95rem;
+    color: var(--ink-2);
+    padding: .8rem .95rem;
+    border: 1px solid var(--m1);
+    border-radius: 2px;
+    background: var(--surface-sunk);
+  }
+  .verdict b { color: var(--ink); }
+
+  /* ---------- tables ---------- */
+
+  details.table-view { border-top: 1px solid var(--line); }
+  details.table-view summary {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); cursor: pointer; padding: .6rem 1.15rem; list-style: none;
+  }
+  details.table-view summary::-webkit-details-marker { display: none; }
+  details.table-view summary::before { content: "▸ "; color: var(--line-strong); }
+  details.table-view[open] summary::before { content: "▾ "; }
+  details.table-view summary:hover { color: var(--m1); }
+  details.table-view summary:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+  .table-scroll { overflow-x: auto; }
+  .table-scroll.bordered { border: 1px solid var(--line); border-radius: 3px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  table.data { font-family: var(--mono); font-size: .76rem; }
+  th, td { text-align: left; padding: .55rem .85rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.data th, table.data td { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  table.data th:first-child, table.data td:first-child { text-align: left; }
+  thead th {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); background: var(--surface-sunk);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  .table-scroll table { padding: 0 0 .5rem; }
+
+  /* ---------- split diagram ---------- */
+
+  .split { display: flex; flex-direction: column; gap: .9rem; }
+  .split-row { display: flex; flex-direction: column; gap: .3rem; }
+  .split-label { font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .sessions { display: flex; gap: 3px; }
+  .sess {
+    flex: 1;
+    padding: .5rem .3rem;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: .7rem;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunk);
+    color: var(--muted);
+  }
+  .sess.hist { background: var(--surface-sunk); border-color: var(--line-strong); color: var(--ink-2); }
+  .sess.cur { background: var(--m1); border-color: var(--m1); color: #fff; }
+  :root[data-theme="dark"] .sess.cur,
+  :root:not([data-theme="light"]) .sess.cur { color: #05191C; }
+  .sess.bad { border-style: dashed; border-color: var(--m3); color: var(--m3); }
+
+  .checklist { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+  .check-group {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1rem 1.1rem;
+    display: flex; flex-direction: column; gap: .55rem;
+  }
+  .check-group ul { margin: 0; padding-left: 1.05rem; color: var(--ink-2); font-size: .9rem; display: flex; flex-direction: column; gap: .3rem; }
+
+  code {
+    font-family: var(--mono); font-size: .88em;
+    background: var(--surface-sunk); border: 1px solid var(--line);
+    border-radius: 2px; padding: .05em .3em;
+  }
+
+  a { color: var(--m1); text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.25rem;
+    font-size: .85rem;
+    color: var(--muted);
+    max-width: var(--measure);
+    display: flex; flex-direction: column; gap: .5rem;
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">
+      <span>Neural Accord · BCI co-adaptation track</span>
+      <span class="tag">Fidelity level 4</span>
+      <span class="tag">Illustrative curves</span>
+    </p>
+    <h1>A better score is not a lighter burden</h1>
+    <p class="standfirst">
+      For someone using a brain–computer interface, the cost that matters is not offline accuracy.
+      It is how much of their day is spent recalibrating the decoder before it works. That quantity
+      has a name, a formula, and a way of being gamed.
+    </p>
+    <p class="disclaimer">
+      <strong>The curves on this page are synthetic.</strong> They are drawn from closed-form
+      functions chosen to make the argument legible, not from any recording. Neural Accord does not
+      treat simulated activity as evidence of BCI utility, and no calibration claim counts until it
+      is run on permitted real data through a declared split, preprocessing, label budget, and
+      baseline registry.
+    </p>
+  </header>
+
+  <!-- ============ the quantity ============ -->
+  <section>
+    <h2>The quantity being measured</h2>
+    <div class="formula">
+      <p class="formula-eq"><span class="lhs">B<sub>τ</sub></span> = min { n : P(n) ≥ τ }</p>
+      <dl>
+        <dt>n</dt>
+        <dd>Current-session labelled data — trials, prompted minutes, or target acquisitions.</dd>
+        <dt>P(n)</dt>
+        <dd>Task performance after calibrating with n.</dd>
+        <dt>τ</dt>
+        <dd>The usable-control threshold, <em>declared before the run</em>.</dd>
+        <dt>B<sub>τ</sub></dt>
+        <dd>The smallest n that reaches it. Lower is better. Undefined if the method never reaches τ.</dd>
+      </dl>
+    </div>
+    <p class="prose">
+      Everything on this page follows from one property of that definition: B<sub>τ</sub> depends on
+      τ, and a method's ranking can invert as τ moves. That is not a flaw in the metric — it is the
+      reason τ has to be fixed in advance, by the task's actual control requirement, rather than
+      chosen after the curves are in.
+    </p>
+  </section>
+
+  <!-- ============ interactive ============ -->
+  <section>
+    <h2>Move the threshold and watch the winner change</h2>
+    <p class="prose">
+      Four decoders against the same chronological split. Drag τ across the range and read the
+      burden tiles: at a modest control requirement the co-adaptive method wins comfortably; push
+      the requirement high enough and it never gets there at all, while the slow supervised
+      recalibration does.
+    </p>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3 class="panel-title">Performance vs. current-session label budget</h3>
+        <p class="panel-note">Synthetic curves · cursor-control style task</p>
+      </div>
+      <div class="panel-body">
+
+        <div class="tau">
+          <label for="tau">Declared threshold τ</label>
+          <input type="range" id="tau" min="0.45" max="0.95" step="0.01" value="0.80">
+          <output id="tau-out" for="tau">0.80</output>
+        </div>
+
+        <div class="chart-wrap" id="chart-wrap">
+          <canvas id="chart" data-h="330" aria-label="Performance against number of current-session labelled trials for four decoders, with the declared threshold marked"></canvas>
+          <div class="tip" id="tip" role="status"></div>
+        </div>
+
+        <div class="legend" aria-hidden="true">
+          <span><i class="swatch" style="background:var(--m1)"></i> Co-adaptive (candidate)</span>
+          <span><i class="swatch" style="background:var(--m2)"></i> Supervised recalibration</span>
+          <span><i class="swatch" style="background:var(--m3)"></i> Domain adaptation</span>
+          <span><i class="swatch dash"></i> Fixed historical decoder</span>
+        </div>
+
+        <div class="burden" id="burden"></div>
+
+        <p class="verdict" id="verdict"></p>
+      </div>
+
+      <details class="table-view">
+        <summary>Show as table</summary>
+        <div class="table-scroll">
+          <table class="data" id="curve-table">
+            <caption class="sr-only">Performance by label budget for each decoder</caption>
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ what does not count ============ -->
+  <section>
+    <h2>What does not count as reducing burden</h2>
+    <div class="checklist">
+      <div class="check-group">
+        <h3>Not burden reduction</h3>
+        <ul>
+          <li>A higher final score reached only after <em>more</em> calibration than the baseline.</li>
+          <li>A threshold chosen after seeing the curves.</li>
+          <li>Improvement measured on a random split that lets future trials inform the past.</li>
+          <li>Gains that vanish once the decoder is run closed-loop instead of offline.</li>
+          <li>A win against a baseline that was not tuned, versioned, or run through the same pipeline.</li>
+        </ul>
+      </div>
+      <div class="check-group">
+        <h3>Burden reduction</h3>
+        <ul>
+          <li>A lower B<sub>τ</sub> at a predeclared τ, on permitted real data.</li>
+          <li>Fewer prompted trials or calibration minutes for the same closed-loop control.</li>
+          <li>Faster recovery to τ after drift, channel loss, or feature degradation.</li>
+          <li>The same gain reproduced across the declared seed list and reported with its variance.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ chronological split ============ -->
+  <section>
+    <h2>Why the split has to be chronological</h2>
+    <p class="prose">
+      The relationship between neural features and intended movement shifts across minutes, days,
+      and sessions. A random split lets a model learn from trials that had not happened yet, which
+      quietly deletes the entire problem the track exists to study.
+    </p>
+    <div class="panel">
+      <div class="panel-body split">
+        <div class="split-row">
+          <span class="split-label">Chronological — the only permitted form</span>
+          <div class="sessions">
+            <span class="sess hist">session 01</span>
+            <span class="sess hist">session 02</span>
+            <span class="sess hist">session 03</span>
+            <span class="sess cur">session 04 · evaluate</span>
+          </div>
+        </div>
+        <div class="split-row">
+          <span class="split-label">Random intermixing — not permitted</span>
+          <div class="sessions">
+            <span class="sess bad">trials 01–04, shuffled</span>
+            <span class="sess bad">train</span>
+            <span class="sess bad">test</span>
+            <span class="sess bad">leaks the future</span>
+          </div>
+        </div>
+        <p class="panel-note">
+          Historical sessions supply the prior. Only the current session may supply labels, and only
+          up to the declared budget.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ baselines ============ -->
+  <section>
+    <h2>There is no universal baseline</h2>
+    <p class="prose">
+      Every dataset and task profile declares its own baselines, versions them, and runs them through
+      the same split, preprocessing, label budget, and reporting pipeline as the method under test.
+      The Neural Accord method is never presumed superior — it is one row in its own registry.
+    </p>
+    <div class="table-scroll bordered">
+      <table>
+        <caption class="sr-only">Initial intracortical cursor-control baseline registry</caption>
+        <thead>
+          <tr><th scope="col">Baseline class</th><th scope="col">What it establishes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fixed historical decoder</td><td>The unadapted cost of drift — the floor any adaptive method must beat</td></tr>
+          <tr><td>Current-session supervised calibration</td><td>The standard recalibration reference a user already lives with</td></tr>
+          <tr><td>Linear / Kalman-style decoder</td><td>The classical practical control baseline</td></tr>
+          <tr><td>Nonlinear state-space decoder</td><td>A task-appropriate nonlinear comparator</td></tr>
+          <tr><td>Domain-adaptation method</td><td>A direct calibration-reduction comparator</td></tr>
+          <tr><td>Latent-alignment / manifold method</td><td>Whether stable-representation approaches suffice</td></tr>
+          <tr><td>Neural Accord co-adaptive method</td><td>The candidate under test, never presumed superior</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ report contents ============ -->
+  <section>
+    <h2>What every BCI report must carry</h2>
+    <div class="checklist">
+      <div class="check-group">
+        <h3>The curve, not a point</h3>
+        <ul>
+          <li>Performance against current-session label budget</li>
+          <li>Area under the calibration curve</li>
+          <li>Zero-shot performance from historical sessions alone</li>
+        </ul>
+      </div>
+      <div class="check-group">
+        <h3>Robustness</h3>
+        <ul>
+          <li>Recovery burden after drift, channel loss, or feature degradation</li>
+          <li>Retention cost — whether adapting to a new session damages prior sessions</li>
+          <li>Online adaptation and inference latency</li>
+        </ul>
+      </div>
+      <div class="check-group">
+        <h3>The person's side</h3>
+        <ul>
+          <li>Prompted trials and calibration minutes</li>
+          <li>Failures and explicit recalibration events</li>
+          <li>Closed-loop metrics: target acquisition, throughput, path efficiency, time-to-target</li>
+        </ul>
+      </div>
+      <div class="check-group">
+        <h3>Governance</h3>
+        <ul>
+          <li>Dataset access restrictions and the governing agreement</li>
+          <li>Preprocessing decisions, in order</li>
+          <li>Baseline versions and the split definition</li>
+        </ul>
+      </div>
+    </div>
+    <p class="prose">
+      Controlled human data are never redistributed outside their data-use agreement — including as
+      derived features that would permit reconstruction. The repository holds manifests, checksums,
+      transformations, and citations; the data stay where their agreement says they stay.
+    </p>
+  </section>
+
+  <footer>
+    <p>
+      Neural Accord is a research platform for how adaptive coordination forms, persists, and becomes
+      historically opaque under biologically motivated constraints.
+      <a href="https://github.com/opieeipo/NeuralAccord">Repository</a>.
+    </p>
+    <p>
+      The reporting requirements above are the project's own, from
+      <code>docs/validation.md</code>. The curves are illustrative and carry no evidentiary weight.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  const N_MAX = 120;
+
+  // Closed-form illustrative curves. Each is a saturating exponential:
+  // P(n) = floor + (ceiling - floor) * (1 - e^(-n / rate)).
+  // Chosen so the ranking inverts inside the plausible threshold range --
+  // that inversion is the whole point of the page.
+  const METHODS = [
+    { id: 1, key: "co",   name: "Co-adaptive (candidate)",   floor: 0.44, ceil: 0.855, rate: 9,  color: () => css("--m1"), dash: null },
+    { id: 2, key: "sup",  name: "Supervised recalibration",  floor: 0.10, ceil: 0.960, rate: 42, color: () => css("--m2"), dash: null },
+    { id: 3, key: "dom",  name: "Domain adaptation",         floor: 0.36, ceil: 0.890, rate: 22, color: () => css("--m3"), dash: null },
+    { id: 0, key: "fix",  name: "Fixed historical decoder",  floor: 0.47, ceil: 0.470, rate: 1,  color: () => css("--muted"), dash: [4, 3] }
+  ];
+
+  function perf(m, n) {
+    if (m.ceil === m.floor) return m.floor;
+    return m.floor + (m.ceil - m.floor) * (1 - Math.exp(-n / m.rate));
+  }
+
+  // Smallest integer n in [0, N_MAX] with P(n) >= tau. null when never reached.
+  function burden(m, tau) {
+    for (let n = 0; n <= N_MAX; n++) if (perf(m, n) >= tau) return n;
+    return null;
+  }
+
+  function auc(m) {
+    let s = 0;
+    for (let n = 0; n < N_MAX; n++) s += (perf(m, n) + perf(m, n + 1)) / 2;
+    return s / N_MAX;
+  }
+
+  let tau = 0.80;
+
+  /* ---------- canvas ---------- */
+
+  const PAD = { l: 46, r: 104, t: 16, b: 40 };
+
+  function logicalHeight(c) { return parseInt(c.dataset.h, 10); }
+
+  function fit(canvas) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = canvas.clientWidth || 600;
+    const h = logicalHeight(canvas);
+    canvas.style.height = h + "px";
+    if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+    }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx, w, h };
+  }
+
+  function geom(w, h) {
+    return {
+      x0: PAD.l, x1: w - PAD.r, y0: PAD.t, y1: h - PAD.b,
+      xOf(n) { return this.x0 + (n / N_MAX) * (this.x1 - this.x0); },
+      yOf(v) { return this.y1 - ((v - 0.2) / 0.8) * (this.y1 - this.y0); }
+    };
+  }
+
+  let hoverN = null;
+
+  function draw() {
+    const canvas = $("chart");
+    const { ctx, w, h } = fit(canvas);
+    const g = geom(w, h);
+
+    // grid
+    ctx.strokeStyle = css("--line");
+    ctx.fillStyle = css("--muted");
+    ctx.lineWidth = 1;
+    ctx.font = "11px " + css("--mono");
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    for (let v = 0.2; v <= 1.0001; v += 0.2) {
+      const y = Math.round(g.yOf(v)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(g.x0, y); ctx.lineTo(g.x1, y); ctx.stroke();
+      ctx.fillText(v.toFixed(1), g.x0 - 8, y);
+    }
+
+    // x ticks at the declared label budgets
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    for (const n of [0, 5, 10, 25, 50, 100]) {
+      const x = g.xOf(n);
+      ctx.strokeStyle = css("--line");
+      ctx.beginPath(); ctx.moveTo(Math.round(x) + 0.5, g.y1); ctx.lineTo(Math.round(x) + 0.5, g.y1 + 4); ctx.stroke();
+      ctx.fillStyle = css("--muted");
+      ctx.fillText(String(n), x, g.y1 + 8);
+    }
+    ctx.fillText("current-session labelled trials", (g.x0 + g.x1) / 2, g.y1 + 24);
+
+    // threshold band
+    const ty = Math.round(g.yOf(tau)) + 0.5;
+    ctx.save();
+    ctx.strokeStyle = css("--ink");
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(g.x0, ty); ctx.lineTo(g.x1, ty); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = css("--ink");
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.font = "600 11px " + css("--mono");
+    ctx.fillText("τ = " + tau.toFixed(2), g.x0 + 4, ty - 4);
+
+    // curves
+    for (const m of METHODS) {
+      ctx.save();
+      ctx.strokeStyle = m.color();
+      ctx.lineWidth = 2;
+      ctx.lineJoin = "round";
+      if (m.dash) ctx.setLineDash(m.dash);
+      ctx.beginPath();
+      for (let n = 0; n <= N_MAX; n++) {
+        const x = g.xOf(n), y = g.yOf(perf(m, n));
+        n ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // B_tau markers: a dot where each curve first crosses the threshold
+    for (const m of METHODS) {
+      const b = burden(m, tau);
+      if (b === null) continue;
+      const x = g.xOf(b), y = g.yOf(perf(m, b));
+      ctx.beginPath();
+      ctx.moveTo(x, g.y1); ctx.lineTo(x, y);
+      ctx.strokeStyle = m.color();
+      ctx.globalAlpha = 0.35;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = m.color();
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = css("--surface");
+      ctx.stroke();
+    }
+
+    // endpoint labels, de-collided
+    const labels = METHODS.map(m => ({
+      y: g.yOf(perf(m, N_MAX)),
+      text: perf(m, N_MAX).toFixed(2) + " " + m.key,
+      color: m.color()
+    })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < labels.length; i++) {
+      if (labels[i].y - labels[i - 1].y < 13) labels[i].y = labels[i - 1].y + 13;
+    }
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.font = "11px " + css("--mono");
+    for (const l of labels) {
+      ctx.fillStyle = l.color;
+      ctx.fillText(l.text, g.x1 + 8, l.y);
+    }
+
+    // hover crosshair
+    if (hoverN !== null) {
+      const x = Math.round(g.xOf(hoverN)) + 0.5;
+      ctx.strokeStyle = css("--line-strong");
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, g.y0); ctx.lineTo(x, g.y1); ctx.stroke();
+      for (const m of METHODS) {
+        ctx.beginPath();
+        ctx.arc(g.xOf(hoverN), g.yOf(perf(m, hoverN)), 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = m.color();
+        ctx.fill();
+      }
+    }
+  }
+
+  /* ---------- readouts ---------- */
+
+  function paint() {
+    const rows = METHODS.map(m => {
+      const b = burden(m, tau);
+      return { m, b, a: auc(m) };
+    });
+
+    $("burden").innerHTML = rows.map(({ m, b, a }) =>
+      '<div class="tile" data-m="' + m.id + '">' +
+        '<span class="tile-label">' + m.name + "</span>" +
+        (b === null
+          ? '<span class="tile-value never">never reaches τ</span>'
+          : '<span class="tile-value">' + b + "</span>") +
+        '<span class="tile-sub">' + (b === null ? "within 120 trials" : "trials to reach τ") +
+          " · AUC " + a.toFixed(3) + "</span>" +
+      "</div>"
+    ).join("");
+
+    // Verdict: compare the candidate against the standard recalibration reference.
+    const co = rows.find(r => r.m.key === "co");
+    const sup = rows.find(r => r.m.key === "sup");
+    let msg;
+    if (co.b === null && sup.b === null) {
+      msg = "<b>No method reaches τ.</b> At this control requirement the honest report is that none of them is usable, and the comparison is moot.";
+    } else if (co.b === null) {
+      msg = "<b>The candidate never reaches τ; supervised recalibration does, at " + sup.b + " trials.</b> " +
+            "Its higher ceiling wins outright here — and note that the candidate's better area under the curve does not rescue it.";
+    } else if (sup.b === null) {
+      msg = "<b>The candidate reaches τ at " + co.b + " trials; supervised recalibration never does.</b>";
+    } else if (co.b < sup.b) {
+      const factor = sup.b / Math.max(co.b, 1);
+      msg = "<b>The candidate reaches τ at " + co.b + " trials against " + sup.b + ".</b> " +
+            "That is " + factor.toFixed(1) + "× less current-session labelling for the same declared control — " +
+            "the only kind of claim that counts as burden reduction.";
+    } else if (co.b === sup.b) {
+      msg = "<b>Both reach τ at " + co.b + " trials.</b> No burden reduction is demonstrated at this threshold.";
+    } else {
+      msg = "<b>Supervised recalibration reaches τ first, at " + sup.b + " trials against " + co.b + ".</b> " +
+            "The candidate's faster early rise does not help once the requirement is this strict.";
+    }
+    $("verdict").innerHTML = msg;
+
+    draw();
+    fillTable();
+  }
+
+  function fillTable() {
+    const budgets = [0, 5, 10, 25, 50, 100, 120];
+    $("curve-table").querySelector("thead").innerHTML =
+      "<tr><th scope=\"col\">Method</th>" +
+      budgets.map(n => '<th scope="col">n=' + n + "</th>").join("") +
+      '<th scope="col">B<sub>τ</sub></th><th scope="col">AUC</th></tr>';
+    $("curve-table").querySelector("tbody").innerHTML = METHODS.map(m => {
+      const b = burden(m, tau);
+      return "<tr><td>" + m.name + "</td>" +
+        budgets.map(n => "<td>" + perf(m, n).toFixed(3) + "</td>").join("") +
+        "<td>" + (b === null ? "—" : b) + "</td>" +
+        "<td>" + auc(m).toFixed(3) + "</td></tr>";
+    }).join("");
+  }
+
+  /* ---------- interaction ---------- */
+
+  $("tau").addEventListener("input", () => {
+    tau = parseFloat($("tau").value);
+    $("tau-out").textContent = tau.toFixed(2);
+    paint();
+  });
+
+  (function hover() {
+    const canvas = $("chart"), tip = $("tip"), wrap = $("chart-wrap");
+    canvas.addEventListener("pointermove", (ev) => {
+      const r = canvas.getBoundingClientRect();
+      const px = ev.clientX - r.left;
+      const g = geom(canvas.clientWidth, logicalHeight(canvas));
+      if (px < g.x0 || px > g.x1) { hoverN = null; tip.dataset.show = "0"; draw(); return; }
+      hoverN = Math.round(((px - g.x0) / (g.x1 - g.x0)) * N_MAX);
+      tip.dataset.show = "1";
+      tip.innerHTML =
+        "<b>" + hoverN + " labelled trials</b><br>" +
+        METHODS.map(m =>
+          '<span class="k">' + m.key + "</span> " + perf(m, hoverN).toFixed(3)
+        ).join("<br>");
+      const tw = tip.offsetWidth;
+      let left = g.xOf(hoverN) + 14;
+      if (left + tw > wrap.clientWidth) left = g.xOf(hoverN) - tw - 14;
+      tip.style.left = Math.max(0, left) + "px";
+      tip.style.top = "16px";
+      draw();
+    });
+    canvas.addEventListener("pointerleave", () => { hoverN = null; tip.dataset.show = "0"; draw(); });
+  })();
+
+  let rt = 0;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => requestAnimationFrame(draw));
+
+  paint();
+})();
+</script>

@@ -1,0 +1,841 @@
+<title>The Fidelity Ladder — Neural Accord</title>
+
+<style>
+  /* ---------------------------------------------------------------
+     Neural Accord · fidelity ladder explainer
+     Shares the demo page's tokens so the three pages read as one
+     family. Evidence labels get an ordinal treatment (fill weight +
+     border style), deliberately separate from the channel's
+     categorical hues, because confidence is a ranking and channel
+     outcome is an identity.
+     --------------------------------------------------------------- */
+
+  :root {
+    color-scheme: light dark;
+
+    --ground:        #E9EEEF;
+    --surface:       #FBFDFD;
+    --surface-sunk:  #E1E8EA;
+    --ink:           #0E1518;
+    --ink-2:         #35474D;
+    --muted:         #5D6E73;
+    --line:          #CBD8DA;
+    --line-strong:   #A9BBBE;
+
+    --signal:        #00879B;
+    --silence:       #B07500;
+    --interference:  #A83254;
+
+    --rung-fill:     rgba(0, 135, 155, .12);
+    --focus:         #00879B;
+    --shadow: 0 1px 2px rgba(14, 21, 24, .06), 0 8px 24px -16px rgba(14, 21, 24, .28);
+
+    --display: "Superclarendon", "Rockwell", "Bookman Old Style", Georgia, "Times New Roman", serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    --measure: 68ch;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:        #0A1013;
+      --surface:       #111A1D;
+      --surface-sunk:  #0D1518;
+      --ink:           #E3EBEC;
+      --ink-2:         #B3C3C6;
+      --muted:         #8B9CA1;
+      --line:          #223035;
+      --line-strong:   #33454B;
+      --signal:        #1F9CA8;
+      --silence:       #C0821F;
+      --interference:  #D24A72;
+      --rung-fill:     rgba(31, 156, 168, .16);
+      --focus:         #35BCC8;
+      --shadow: 0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:        #0A1013;
+    --surface:       #111A1D;
+    --surface-sunk:  #0D1518;
+    --ink:           #E3EBEC;
+    --ink-2:         #B3C3C6;
+    --muted:         #8B9CA1;
+    --line:          #223035;
+    --line-strong:   #33454B;
+    --signal:        #1F9CA8;
+    --silence:       #C0821F;
+    --interference:  #D24A72;
+    --rung-fill:     rgba(31, 156, 168, .16);
+    --focus:         #35BCC8;
+    --shadow: 0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 74rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .masthead { display: flex; flex-direction: column; gap: 1rem; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+    max-width: 20ch;
+  }
+
+  .standfirst { max-width: var(--measure); font-size: 1.06rem; color: var(--ink-2); margin: 0; }
+
+  section { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .section-intro { max-width: var(--measure); color: var(--ink-2); margin: 0; }
+
+  p { margin: 0; }
+
+  /* ---------- the ladder ---------- */
+
+  .ladder {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .5rem;
+    align-items: end;
+  }
+  @media (max-width: 52rem) {
+    .ladder { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+  }
+
+  .rung {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    padding: .8rem .85rem;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-bottom: 3px solid var(--line-strong);
+    border-radius: 3px 3px 0 0;
+    cursor: pointer;
+    font: inherit;
+    color: var(--ink);
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .rung:hover { border-bottom-color: var(--signal); }
+  .rung:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .rung[aria-selected="true"] {
+    background: var(--rung-fill);
+    border-color: var(--signal);
+    border-bottom-width: 3px;
+  }
+
+  /* Height encodes position on the ladder: higher level, taller rung. */
+  .rung[data-level="0"] { min-height: 5.4rem; }
+  .rung[data-level="1"] { min-height: 6.3rem; }
+  .rung[data-level="2"] { min-height: 7.2rem; }
+  .rung[data-level="3"] { min-height: 8.1rem; }
+  .rung[data-level="4"] { min-height: 9rem; }
+  @media (max-width: 52rem) { .rung { min-height: 0 !important; } }
+
+  .rung-n {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .rung[aria-selected="true"] .rung-n { color: var(--signal); }
+  .rung-name { font-size: .95rem; font-weight: 600; line-height: 1.25; margin-top: auto; }
+
+  .detail {
+    background: var(--surface);
+    border: 1px solid var(--signal);
+    border-radius: 0 0 3px 3px;
+    padding: 1.25rem 1.35rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  @media (max-width: 52rem) { .detail { grid-template-columns: minmax(0, 1fr); } }
+
+  .detail h3 {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 .4rem;
+    font-weight: 600;
+  }
+
+  .permits {
+    font-family: var(--display);
+    font-size: 1.18rem;
+    line-height: 1.35;
+    color: var(--ink);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .detail ul { margin: 0; padding-left: 1.05rem; color: var(--ink-2); display: flex; flex-direction: column; gap: .35rem; font-size: .92rem; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .15rem; }
+
+  /* ---------- evidence labels: ordinal, form-encoded ---------- */
+
+  .ev {
+    font-family: var(--mono);
+    font-size: .64rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    padding: .2em .5em;
+    border-radius: 2px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .ev-measured    { background: var(--ink); color: var(--surface); }
+  .ev-modelled    { background: var(--rung-fill); color: var(--signal); border-color: var(--signal); }
+  .ev-abstracted  { color: var(--silence); border-color: var(--silence); }
+  .ev-hypothesis  { color: var(--interference); border-style: dashed; border-color: var(--interference); }
+
+  .ev-key { display: flex; flex-direction: column; gap: .6rem; }
+  .ev-key-row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: .85rem; align-items: start; }
+  .ev-key-row p { color: var(--ink-2); font-size: .92rem; }
+  @media (max-width: 40rem) { .ev-key-row { grid-template-columns: minmax(0, 1fr); gap: .25rem; } }
+
+  /* ---------- constraint map ---------- */
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 44rem; }
+  th, td { text-align: left; padding: .6rem .85rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th {
+    font-family: var(--mono);
+    font-size: .66rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface-sunk);
+    position: sticky;
+    top: 0;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr[hidden] { display: none; }
+  td.feature { font-weight: 600; }
+  td.limit { color: var(--ink-2); }
+
+  .filter-note {
+    font-family: var(--mono);
+    font-size: .74rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+  button.clear {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .25rem .55rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button.clear:hover { border-color: var(--signal); color: var(--signal); }
+  button.clear:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  /* ---------- hypotheses ---------- */
+
+  .hyps { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: 1rem; }
+
+  .hyp {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line-strong);
+    border-radius: 2px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+  .hyp[data-active="1"] { border-left-color: var(--signal); }
+  .hyp[hidden] { display: none; }
+  .hyp-id {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+  .hyp-claim { font-weight: 600; line-height: 1.4; }
+  .hyp-fail { font-size: .89rem; color: var(--ink-2); }
+  .hyp-fail b {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--interference);
+    display: block;
+    margin-bottom: .1rem;
+    font-weight: 600;
+  }
+
+  /* ---------- disclaimers ---------- */
+
+  .negative {
+    border: 1px solid var(--silence);
+    border-radius: 3px;
+    background: var(--surface);
+    padding: 1.1rem 1.25rem;
+    max-width: var(--measure);
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+  }
+  .negative h2 { font-size: 1.25rem; }
+  .negative ul { margin: 0; padding-left: 1.1rem; color: var(--ink-2); display: flex; flex-direction: column; gap: .35rem; }
+
+  .profiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+  .profile {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+  .profile h3 { font-family: var(--display); font-weight: 400; font-size: 1.1rem; margin: 0; }
+  .profile .role {
+    font-family: var(--mono);
+    font-size: .66rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--signal);
+  }
+  .profile p { font-size: .9rem; color: var(--ink-2); }
+
+  code {
+    font-family: var(--mono);
+    font-size: .88em;
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: .05em .3em;
+  }
+
+  a { color: var(--signal); text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.25rem;
+    font-size: .85rem;
+    color: var(--muted);
+    max-width: var(--measure);
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Neural Accord · Reading the constraints</p>
+    <h1>What a model is allowed to conclude</h1>
+    <p class="standfirst">
+      Neural Accord's central discipline is not how good its numbers are. It is keeping straight
+      what was measured, what was modelled, what was abstracted, and what is merely hoped. The
+      fidelity ladder is how that discipline is enforced: each level fixes a ceiling on the claims
+      a run at that level may support, no matter how the results look.
+    </p>
+  </header>
+
+  <!-- ============ ladder ============ -->
+  <section>
+    <h2>The fidelity ladder</h2>
+    <p class="section-intro">
+      Select a level to see what it permits, which constraints are in play, and which hypotheses it
+      can bear on. A report that draws a Level 2 conclusion from a Level 0 run is a defect, not a
+      stretch.
+    </p>
+
+    <div class="ladder" role="tablist" aria-label="Fidelity levels">
+      <button class="rung" role="tab" data-level="0" aria-selected="true" id="rung-0" aria-controls="detail">
+        <span class="rung-n">Level 0</span>
+        <span class="rung-name">Functional</span>
+      </button>
+      <button class="rung" role="tab" data-level="1" aria-selected="false" id="rung-1" aria-controls="detail">
+        <span class="rung-n">Level 1</span>
+        <span class="rung-name">Dynamic synapse</span>
+      </button>
+      <button class="rung" role="tab" data-level="2" aria-selected="false" id="rung-2" aria-controls="detail">
+        <span class="rung-n">Level 2</span>
+        <span class="rung-name">Population code</span>
+      </button>
+      <button class="rung" role="tab" data-level="3" aria-selected="false" id="rung-3" aria-controls="detail">
+        <span class="rung-n">Level 3</span>
+        <span class="rung-name">Circuit-specific</span>
+      </button>
+      <button class="rung" role="tab" data-level="4" aria-selected="false" id="rung-4" aria-controls="detail">
+        <span class="rung-n">Level 4</span>
+        <span class="rung-name">BCI co-adaptation</span>
+      </button>
+    </div>
+
+    <div class="detail" id="detail" role="tabpanel" aria-live="polite">
+      <div>
+        <h3>Permitted conclusion</h3>
+        <p class="permits" id="d-permits"></p>
+      </div>
+      <div>
+        <h3>What is implemented</h3>
+        <ul id="d-impl"></ul>
+        <h3 style="margin-top:1rem">Bears on</h3>
+        <p class="chips" id="d-hyps"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ evidence policy ============ -->
+  <section>
+    <h2>Four labels, in descending confidence</h2>
+    <p class="section-intro">
+      Every parameter and every mechanism in the project carries one of these. The labels are
+      ordinal — they rank how much weight a number can bear — which is why they are drawn as a
+      progression rather than as four colours of the same standing.
+    </p>
+    <div class="ev-key">
+      <div class="ev-key-row">
+        <span><span class="ev ev-measured">Measured</span></span>
+        <p>Direct observation in a named species, circuit, connection class, and condition. The only
+          label that describes something someone actually recorded.</p>
+      </div>
+      <div class="ev-key-row">
+        <span><span class="ev ev-modelled">Modelled</span></span>
+        <p>A published model fitted to or constrained by empirical data. Inherits the fit's
+          assumptions along with its numbers.</p>
+      </div>
+      <div class="ev-key-row">
+        <span><span class="ev ev-abstracted">Abstracted</span></span>
+        <p>A deliberate simplification, with its retained and omitted properties written down.
+          Most of Level 0 lives here.</p>
+      </div>
+      <div class="ev-key-row">
+        <span><span class="ev ev-hypothesis">Hypothesis</span></span>
+        <p>An untested prediction of the project's own. Never represented as settled fact, and never
+          quietly promoted by being repeated.</p>
+      </div>
+    </div>
+    <p class="section-intro">
+      No configuration may use an undocumented “mammalian default.” A missing human parameter is
+      recorded as <code>unknown</code>, <code>inferred</code>, or
+      <code>mouse_prior_for_sensitivity_only</code> — never silently copied from the mouse profile
+      and presented as a human measurement.
+    </p>
+  </section>
+
+  <!-- ============ constraint map ============ -->
+  <section>
+    <h2>Where each mechanism stops being a biological claim</h2>
+    <p class="section-intro">
+      The limitation column is the load-bearing one. It is what keeps a convenient abstraction from
+      being read as a finding about brains.
+    </p>
+    <p class="filter-note" id="filter-note"></p>
+    <div class="table-scroll">
+      <table id="constraints">
+        <caption class="sr-only">Constraint map: feature, biological target, evidence label, and limitation</caption>
+        <thead>
+          <tr>
+            <th scope="col">Feature</th>
+            <th scope="col">Biological target</th>
+            <th scope="col">Status</th>
+            <th scope="col">Limitation</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ hypotheses ============ -->
+  <section>
+    <h2>Six hypotheses, each with a way to lose</h2>
+    <p class="section-intro">
+      A hypothesis with no declared falsifying outcome is not ready to be listed. Each card states
+      the claim and the result that would kill it.
+    </p>
+    <div class="hyps" id="hyps"></div>
+  </section>
+
+  <!-- ============ profiles ============ -->
+  <section>
+    <h2>Two species, kept apart on purpose</h2>
+    <p class="section-intro">
+      Mouse and human evidence live in separate profiles and are never averaged into an undocumented
+      mammalian default. Comparative work holds the task and the analysis constant and changes only
+      the documented species constraints.
+    </p>
+    <div class="profiles">
+      <div class="profile">
+        <span class="role">Baseline</span>
+        <h3>Mouse cortex</h3>
+        <p>The strongest experimentally tractable mammalian foundation for linking cell type,
+          connectivity, synaptic physiology, plasticity, behaviour, and perturbation.</p>
+      </div>
+      <div class="profile">
+        <span class="role">Constraint</span>
+        <h3>Human cortex</h3>
+        <p>Tests transfer rather than assuming mouse is an interchangeable human proxy. Viable human
+          tissue is more limited, so more entries here legitimately stay <code>unknown</code>.</p>
+      </div>
+      <div class="profile">
+        <span class="role">Transfer</span>
+        <h3>Comparative</h3>
+        <p>Pairs the two so one experiment runs twice under documented, differing constraints, and
+          reports which findings survive.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ what it does not claim ============ -->
+  <section>
+    <div class="negative">
+      <h2>What Neural Accord does not claim</h2>
+      <ul>
+        <li>That a symbolic channel is a literal synapse.</li>
+        <li>That it simulates an entire brain.</li>
+        <li>That it establishes a theory of consciousness.</li>
+        <li>That a Level 3 model of a named circuit is a model of cognition.</li>
+        <li>That an abstraction becomes a measurement by being useful.</li>
+      </ul>
+      <p style="color:var(--ink-2)">
+        Collapse regimes are reported with the same care as successes. A sweep that finds only
+        failure is a result; a sweep whose failing arm goes unreported is a defect.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      Neural Accord is a research platform for how adaptive coordination forms, persists, and becomes
+      historically opaque under biologically motivated constraints.
+      <a href="https://github.com/opieeipo/NeuralAccord">Repository</a>.
+    </p>
+    <p>
+      This page restates the project's own constraint documents. The authoritative versions are
+      <code>docs/biological-constraints.md</code>, <code>docs/abstraction-boundaries.md</code>, and
+      <code>docs/hypotheses.md</code>.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const LEVELS = [
+    {
+      n: 0,
+      name: "Functional",
+      permits: "The computational effects of constrained stochastic communication — and nothing about synapses.",
+      impl: [
+        "Discrete transmission events",
+        "Bounded signalling window",
+        "Fixed erasure and interference rates",
+        "Reward-driven adaptation"
+      ],
+      hyps: ["H2"]
+    },
+    {
+      n: 1,
+      name: "Dynamic synapse",
+      permits: "The consequences of a modelled synaptic dynamics for the phenomena Level 0 found.",
+      impl: [
+        "State-dependent release probability",
+        "Short-term facilitation and depression",
+        "Transmission delay",
+        "Parameter distributions from a named profile"
+      ],
+      hyps: ["H1"]
+    },
+    {
+      n: 2,
+      name: "Population code",
+      permits: "Whether those phenomena survive at all once nobody hands the system a symbol.",
+      impl: [
+        "Spiking or rate populations",
+        "Probabilistic synapses",
+        "Recurrent inhibition",
+        "Temporal decoding — the SILENCE label is removed"
+      ],
+      hyps: ["H3", "H4"]
+    },
+    {
+      n: 3,
+      name: "Circuit-specific",
+      permits: "A declared circuit model under specified conditions. Not a whole-brain model, and not a model of cognition.",
+      impl: [
+        "Named region, layer, and cell types",
+        "Measured connectivity",
+        "Local plasticity rules",
+        "Declared biological validation targets"
+      ],
+      hyps: ["H5"]
+    },
+    {
+      n: 4,
+      name: "BCI co-adaptation",
+      permits: "Whether an approach lowers calibration burden under declared data and evaluation conditions — on real recordings, never simulated ones.",
+      impl: [
+        "Historical neural recordings",
+        "Limited current-session labels",
+        "Closed-loop control simulation",
+        "Task-specific baseline registry"
+      ],
+      hyps: ["H6"]
+    }
+  ];
+
+  const CONSTRAINTS = [
+    {
+      feature: "Discrete event transmission",
+      target: "Quantal neurotransmitter release",
+      ev: ["abstracted"],
+      limit: "A token is not a vesicle; a channel is not a network socket.",
+      levels: [0, 1, 2, 3]
+    },
+    {
+      feature: "Probabilistic omission",
+      target: "Release failure / unreliable effective transmission",
+      ev: ["abstracted", "modelled"],
+      limit: "Fixed erasure is Level 0 only; later models use state-dependent release.",
+      levels: [0, 1, 2, 3]
+    },
+    {
+      feature: "Bounded signalling window",
+      target: "Temporal, metabolic, and refractory constraints",
+      ev: ["abstracted"],
+      limit: "Neural models use time, spike, and activity budgets rather than message length.",
+      levels: [0, 1, 2, 3]
+    },
+    {
+      feature: "Facilitation / depression",
+      target: "Activity-history-dependent efficacy",
+      ev: ["modelled"],
+      limit: "Parameters are specific to a named evidence profile and its conditions.",
+      levels: [1, 2, 3]
+    },
+    {
+      feature: "Local plasticity",
+      target: "Activity-dependent synaptic change",
+      ev: ["modelled", "hypothesis"],
+      limit: "No rule is treated as a complete theory of learning or memory.",
+      levels: [1, 2, 3]
+    },
+    {
+      feature: "SILENCE",
+      target: "Observable erasure, for diagnostic control",
+      ev: ["abstracted"],
+      limit: "Postsynaptic systems do not receive a labelled notice of a failed release. Level 2 removes the label.",
+      levels: [0, 1]
+    },
+    {
+      feature: "Substitution",
+      target: "Effective interference / decoding ambiguity",
+      ev: ["abstracted"],
+      limit: "Neural models use competing activity, timing jitter, and background noise instead.",
+      levels: [0, 1, 2, 3]
+    },
+    {
+      feature: "Decoder drift",
+      target: "Changing neural / recording / strategy relationship across sessions",
+      ev: ["measured", "modelled"],
+      limit: "Any BCI claim requires task-specific validation on real data.",
+      levels: [4]
+    }
+  ];
+
+  const HYPOTHESES = [
+    {
+      id: "H1",
+      title: "Dynamic reliability",
+      level: 1,
+      claim: "Under some task regimes, state-dependent transmission and limited signalling capacity favour distributed, robust, or redundant coordination over a matched fixed-noise baseline.",
+      fail: "Across the declared seed list, no regime shows robustness above the matched fixed-noise control beyond seed-level variance."
+    },
+    {
+      id: "H2",
+      title: "Boundary sensitivity",
+      level: 0,
+      claim: "At intermediate private-observation rates, systems develop behaviour associated with common-ground boundaries rather than merely ignoring private observations.",
+      fail: "Behaviour at intermediate rates is indistinguishable from a policy that discards private observations outright."
+    },
+    {
+      id: "H3",
+      title: "Maintenance",
+      level: 2,
+      claim: "Persistent competence depends on more than static weights: recurrent dynamics, short-term synaptic state, homeostasis, replay, and structural reorganisation contribute separably.",
+      fail: "Ablating each mechanism in turn leaves competence unchanged, or the contributions prove inseparable under the declared protocol."
+    },
+    {
+      id: "H4",
+      title: "Retention dissociation",
+      level: 2,
+      claim: "A mature system can preserve useful coordination while its developmental route is more recoverable from a complete external trace than from its current operative state.",
+      fail: "Lineage recovery from current state matches recovery from the complete trace."
+    },
+    {
+      id: "H5",
+      title: "Cross-species transfer",
+      level: 3,
+      claim: "Some effects survive mouse/human profile differences; others are sensitive to species-specific parameters or network architecture.",
+      fail: "Every measured effect is invariant across profiles — or the human profile has too many unknowns to support the comparison, which is itself a reportable negative result about evidence availability."
+    },
+    {
+      id: "H6",
+      title: "Calibration reduction",
+      level: 4,
+      claim: "Under chronological cross-session evaluation, an uncertainty-aware co-adaptive method reaches a predeclared control threshold with fewer current-session labels, less prompted time, or faster recovery than declared baselines.",
+      fail: "Its calibration burden is not below the declared baselines' on permitted real data under the same split, preprocessing, and reporting pipeline."
+    }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const EV_NAMES = { measured: "Measured", modelled: "Modelled", abstracted: "Abstracted", hypothesis: "Hypothesis" };
+
+  let active = 0;
+
+  /* ---------- build the constraint table once ---------- */
+
+  const tbody = $("constraints").querySelector("tbody");
+  tbody.innerHTML = CONSTRAINTS.map((c, i) => {
+    const chips = c.ev.map(e => '<span class="ev ev-' + e + '">' + EV_NAMES[e] + "</span>").join(" ");
+    return '<tr data-row="' + i + '">' +
+      '<td class="feature">' + c.feature + "</td>" +
+      "<td>" + c.target + "</td>" +
+      '<td><span class="chips">' + chips + "</span></td>" +
+      '<td class="limit">' + c.limit + "</td>" +
+      "</tr>";
+  }).join("");
+
+  /* ---------- build hypothesis cards once ---------- */
+
+  $("hyps").innerHTML = HYPOTHESES.map(h =>
+    '<article class="hyp" data-hyp="' + h.id + '">' +
+      '<span class="hyp-id"><span>' + h.id + " · " + h.title + "</span><span>Level " + h.level + "</span></span>" +
+      '<span class="hyp-claim">' + h.claim + "</span>" +
+      '<span class="hyp-fail"><b>Falsified if</b>' + h.fail + "</span>" +
+    "</article>"
+  ).join("");
+
+  /* ---------- selection ---------- */
+
+  function select(level) {
+    active = level;
+    const L = LEVELS[level];
+
+    for (const rung of document.querySelectorAll(".rung")) {
+      rung.setAttribute("aria-selected", String(Number(rung.dataset.level) === level));
+    }
+
+    $("d-permits").textContent = L.permits;
+    $("d-impl").innerHTML = L.impl.map(i => "<li>" + i + "</li>").join("");
+    $("d-hyps").innerHTML = L.hyps.map(id => {
+      const h = HYPOTHESES.find(x => x.id === id);
+      return '<span class="ev ev-hypothesis">' + id + " · " + h.title + "</span>";
+    }).join(" ");
+
+    let shown = 0;
+    for (const row of tbody.querySelectorAll("tr")) {
+      const c = CONSTRAINTS[Number(row.dataset.row)];
+      const on = c.levels.includes(level);
+      row.hidden = !on;
+      if (on) shown++;
+    }
+
+    $("filter-note").innerHTML =
+      "Showing " + shown + " of " + CONSTRAINTS.length + " constraints in play at Level " + level +
+      ' <button type="button" class="clear" id="show-all">Show all</button>';
+    $("show-all").addEventListener("click", showAll);
+
+    for (const card of document.querySelectorAll(".hyp")) {
+      const h = HYPOTHESES.find(x => x.id === card.dataset.hyp);
+      card.dataset.active = h.level === level ? "1" : "0";
+    }
+  }
+
+  function showAll() {
+    for (const row of tbody.querySelectorAll("tr")) row.hidden = false;
+    $("filter-note").textContent = "Showing all " + CONSTRAINTS.length + " constraints across every level.";
+  }
+
+  const rungs = Array.from(document.querySelectorAll(".rung"));
+  rungs.forEach((rung) => {
+    rung.addEventListener("click", () => select(Number(rung.dataset.level)));
+    rung.addEventListener("keydown", (ev) => {
+      const i = rungs.indexOf(rung);
+      let next = null;
+      if (ev.key === "ArrowRight" || ev.key === "ArrowDown") next = rungs[(i + 1) % rungs.length];
+      if (ev.key === "ArrowLeft" || ev.key === "ArrowUp") next = rungs[(i - 1 + rungs.length) % rungs.length];
+      if (next) { ev.preventDefault(); next.focus(); select(Number(next.dataset.level)); }
+    });
+  });
+
+  select(0);
+})();
+</script>
