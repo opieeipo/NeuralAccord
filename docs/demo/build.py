@@ -67,10 +67,12 @@ def title_of(text: str, fallback: str) -> str:
     return match.group(1).strip() if match else fallback
 
 
-def build(out: Path) -> int:
-    if out.exists():
+def build(out: Path, clean: bool = True) -> int:
+    # `clean` wipes the target first, which is right for a standalone preview and
+    # wrong when merging into a directory MkDocs has already written to.
+    if clean and out.exists():
         shutil.rmtree(out)
-    out.mkdir(parents=True)
+    out.mkdir(parents=True, exist_ok=True)
 
     pages = sorted(p for p in HERE.glob("*.html"))
     if not pages:
@@ -118,7 +120,14 @@ def build(out: Path) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=HERE / "_site")
-    return build(parser.parse_args().out)
+    parser.add_argument(
+        "--no-clean",
+        action="store_true",
+        help="Merge into an existing directory instead of replacing it. Used when "
+        "writing into a MkDocs build, which has already populated the target.",
+    )
+    args = parser.parse_args()
+    return build(args.out, clean=not args.no_clean)
 
 
 if __name__ == "__main__":

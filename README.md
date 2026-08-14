@@ -6,6 +6,8 @@
 
 *Conceptual architecture, not an anatomical reconstruction or claim of neuronal scale. The figure distinguishes a mouse cortical baseline and a human cortical comparative model. All quantitative assumptions belong in versioned evidence profiles. The initial experiment suite is named **Synaptic Emergence**.*
 
+**Documentation and interactive pages:** [opieeipo.github.io/NeuralAccord](https://opieeipo.github.io/NeuralAccord/) — including a [live Level 0 experiment](https://opieeipo.github.io/NeuralAccord/demo/synaptic-emergence.html) that runs convention formation under a bounded, unreliable channel in the browser alongside its no-communication and randomized-communication controls, plus explainers on the [fidelity ladder](https://opieeipo.github.io/NeuralAccord/demo/fidelity-ladder.html) and on [calibration burden](https://opieeipo.github.io/NeuralAccord/demo/calibration-burden.html). These pages illustrate the mechanisms; they are not reportable results and carry no evidentiary weight.
+
 ## The premise
 
 Neural Accord studies how adaptive systems form and maintain workable coordination when information is bounded, stochastic, state-dependent, and shaped by plasticity. It treats communication, learning, and memory as related problems of retaining action-relevant correlations among activity, environment, and outcome.

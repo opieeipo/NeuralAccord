@@ -13,7 +13,12 @@ nav:
   - Abstraction boundaries: abstraction-boundaries.md
   - Hypotheses: hypotheses.md
   - Validation: validation.md
-  - Interactive pages: demo/README.md
+exclude_docs: |
+  demo/*.html
+  demo/build.py
+  demo/README.md
+  demo/_site/
+
 markdown_extensions:
   - admonition
   - tables

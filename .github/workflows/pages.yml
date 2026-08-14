@@ -1,0 +1,72 @@
+name: Pages
+
+# Builds the MkDocs documentation and the interactive pages into one site and
+# publishes it to GitHub Pages. The demo sources are fragments, so MkDocs is
+# told to skip them (see exclude_docs in mkdocs.yml) and build.py writes the
+# standalone documents into the built site afterwards.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; let a run in progress finish rather than cancelling
+# it half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install documentation dependencies
+        run: uv sync --extra docs
+
+      - name: Build the documentation
+        run: uv run mkdocs build --strict --site-dir site
+
+      - name: Add the interactive pages
+        run: uv run python docs/demo/build.py --out site/demo --no-clean
+
+      - name: Check the built pages are complete documents
+        run: |
+          for page in synaptic-emergence fidelity-ladder calibration-burden; do
+            file="site/demo/$page.html"
+            test -f "$file" || { echo "missing $file"; exit 1; }
+            head -c 15 "$file" | grep -qi '<!doctype html>' || {
+              echo "$file is not a standalone document"; exit 1; }
+          done
+          test -f site/demo/index.html
+          test -f site/index.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

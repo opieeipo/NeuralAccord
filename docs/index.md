@@ -21,18 +21,20 @@ These pages hold the working documents that a contribution has to satisfy:
 
 ## Interactive pages
 
-- **Synaptic Emergence — Level 0** — a live experiment: two systems forming a
-  convention through a channel that erases and corrupts, with the
-  no-communication and randomized-communication controls running alongside. An
-  illustration of the mechanism, not a reportable result.
-- **The fidelity ladder** — what each level lets you conclude, the four evidence
-  labels, and where each mechanism stops being a biological claim.
-- **Calibration burden** — why B<sub>τ</sub> rather than offline accuracy is the
-  unit of claim in the BCI track, with a threshold slider that inverts which
-  method wins.
+- **[Synaptic Emergence — Level 0](demo/synaptic-emergence.html)** — a live
+  experiment: two systems forming a convention through a channel that erases and
+  corrupts, with the no-communication and randomized-communication controls
+  running alongside. An illustration of the mechanism, not a reportable result.
+- **[The fidelity ladder](demo/fidelity-ladder.html)** — what each level lets you
+  conclude, the four evidence labels, and where each mechanism stops being a
+  biological claim.
+- **[Calibration burden](demo/calibration-burden.html)** — why B<sub>τ</sub>
+  rather than offline accuracy is the unit of claim in the BCI track, with a
+  threshold slider that inverts which method wins.
 
 Sources and the build step are described in
-[`demo/README.md`](demo/README.md).
+[`docs/demo/README.md`](https://github.com/opieeipo/NeuralAccord/blob/main/docs/demo/README.md)
+in the repository.
 
 ## Status
 
