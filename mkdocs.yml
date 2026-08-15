@@ -13,6 +13,7 @@ nav:
   - Abstraction boundaries: abstraction-boundaries.md
   - Hypotheses: hypotheses.md
   - Validation: validation.md
+  - Related work: related-work.md
 exclude_docs: |
   demo/*.html
   demo/build.py

@@ -18,13 +18,17 @@ These pages hold the working documents that a contribution has to satisfy:
 - **[Hypotheses](hypotheses.md)** — H1–H6, each with its falsifying outcome.
 - **[Validation](validation.md)** — the reproducibility contract, as a
   checklist.
+- **[Related work](related-work.md)** — a dated novelty audit: what is already
+  claimed in the literature, and which hypotheses remain open.
 
 ## Interactive pages
 
-- **[Synaptic Emergence — Level 0](demo/synaptic-emergence.html)** — a live
-  experiment: two systems forming a convention through a channel that erases and
-  corrupts, with the no-communication and randomized-communication controls
-  running alongside. An illustration of the mechanism, not a reportable result.
+- **[Synaptic Emergence — Level 0](demo/synaptic-emergence.html)** — the project's
+  blank-slate **control condition**, run live: two systems with no prior
+  representation of the world forming a convention through a channel that erases
+  and corrupts, alongside the no-communication and randomized-communication
+  controls. It reproduces a known result on purpose; see
+  [Related work](related-work.md).
 - **[The fidelity ladder](demo/fidelity-ladder.html)** — what each level lets you
   conclude, the four evidence labels, and where each mechanism stops being a
   biological claim.

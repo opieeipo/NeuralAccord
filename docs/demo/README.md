@@ -5,7 +5,7 @@ system — palette, type scale, and panel structure — so they read as one fami
 
 | Page | What it is |
 |---|---|
-| `synaptic-emergence.html` | A **live Level 0 experiment**. Two systems form a convention through a channel that erases and corrupts, with the no-communication and randomized-communication controls running alongside. |
+| `synaptic-emergence.html` | The project's **blank-slate control condition**, run live. Two systems with no prior representation of the world form a convention through a channel that erases and corrupts, with the no-communication and randomized-communication controls alongside. Reproduces a known result deliberately — see [`../related-work.md`](../related-work.md). |
 | `fidelity-ladder.html` | An explainer: what each fidelity level permits you to conclude, the four evidence labels, and the constraint map. |
 | `calibration-burden.html` | An explainer: why B<sub>τ</sub> rather than offline accuracy is the unit of claim in the BCI track. |
 

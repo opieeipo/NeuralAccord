@@ -559,12 +559,14 @@
       <span>Experiment suite: Synaptic Emergence</span>
       <span class="tag">Fidelity level 0</span>
       <span class="tag abstracted">Abstracted</span>
+      <span class="tag abstracted">Control condition</span>
     </p>
     <h1>Convention formation under a bounded, unreliable channel</h1>
     <p class="standfirst">
       Two systems have to agree on what a symbol means, using a channel that drops
-      some transmissions outright and corrupts others. Nobody hands them a protocol.
-      This page runs that experiment live — including the regimes where it fails.
+      some transmissions outright and corrupts others. Nobody hands them a protocol — and
+      neither of them knows anything about the world beforehand. This page runs that baseline
+      live, including the regimes where it fails.
     </p>
     <p class="disclaimer">
       <strong>This is an abstraction, not a measurement.</strong> A token here is not a vesicle
@@ -572,6 +574,18 @@
       computational effects of constrained stochastic communication. Nothing on this page is a
       reportable result — it has no seed list, no variance across seeds, and no resolved
       configuration. It is an illustration of the mechanism the Python implementation will own.
+    </p>
+    <p class="disclaimer">
+      <strong>It also reproduces known results, deliberately.</strong> Convention formation under
+      an unreliable channel — including the redundancy that appears once the signalling budget
+      allows it — is established in the emergent-communication literature. This page is therefore
+      not a contribution. It is the project's <em>control condition</em>: the blank-slate case any
+      claim about richer structure has to be measured against. The systems here carry no
+      representation of the world at all — meanings are bare integers with no geometry — so
+      nothing that depends on them already knowing something can appear. That is precisely what
+      makes it a baseline. See
+      <a href="https://github.com/opieeipo/NeuralAccord/blob/main/docs/related-work.md">the
+      novelty audit</a> for what is and is not claimed.
     </p>
   </header>
 
