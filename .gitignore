@@ -65,6 +65,11 @@ output/
 cython_extensions/
 *_cuda_build/
 
+# Reference papers read during the novelty audit. Cited in
+# docs/references.bib rather than vendored -- they are large binaries and
+# the citation is the durable record.
+docs/*.pdf
+
 # Documentation builds
 site/
 docs/_build/

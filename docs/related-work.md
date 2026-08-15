@@ -1,6 +1,7 @@
 # Related work and novelty audit
 
-A scan of prior art against this project's claims, run 2026-08-15. It exists to
+A scan of prior art against this project's claims, run 2026-08-15 and extended
+the same day with section 7, which the first pass missed. It exists to
 stop the platform re-deriving results that already exist, and to say plainly
 which of its hypotheses are still unclaimed.
 
@@ -181,15 +182,87 @@ on calibration-free BCI via continual online adaptation.
 
 ---
 
+---
+
+## 7. Level 3 already exists — and its central simplification is this project's subject
+
+`MEASURED` — read from the full preprint, not the abstract
+
+[Ito, Haufler, Galván Fraile, Dai, Aman, Chen, Mirasso, Maass & Arkhipov (2026),
+*Deep-learning-assisted simulation of a cortical circuit: integrating anatomy,
+physiology and function*](https://www.biorxiv.org/content/10.64898/2026.03.13.711751v1)
+presents a differentiable ~67,000-neuron model of **mouse primary visual cortex**
+constrained by electron-microscopy connectomics, multipatch synaptic physiology,
+cell-type-resolved electrophysiology, and Neuropixels recordings. It trains
+end-to-end on a single GPU in ~10 hours, is trained only on brief drifting-grating
+responses, and generalises to new contrasts and natural scenes. Code is shared at
+`AllenInstitute/biorealistic-v1-model`.
+
+It uses [Campagnola et al. (2022)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9970277/)
+— already this repository's own citation — as its synaptic physiology constraint.
+
+**This occupies Level 3 of the fidelity ladder**, with better data and resources
+than this project can bring. Building a competing mouse V1 circuit model would be
+wasted effort.
+
+### What it does not model
+
+Verified against the preprint text:
+
+| Mechanism | Status in that model |
+|---|---|
+| Short-term plasticity | Absent. The term does not appear in the paper. |
+| Stochastic / quantal release | Absent. Weights are drawn from log-normal fits to PSP amplitudes using the 90th-percentile pulse response "as a robust estimate of synaptic strength **under elevated release probability**" — release probability is collapsed into a static point estimate in the high-release regime. |
+| Dendritic computation | Absent. Neurons are 201 GLIF Type-3 point models. Dendritic extent enters only as a *statistical* correction when assigning synaptic weights, never as a computational compartment. |
+| Human comparative arm | Absent. "Human" appears only inside reference titles. |
+| Synaptic state | Further compressed, from 44 to 8 postsynaptic-current states per neuron, for backpropagation-through-time memory. |
+
+### Consequence for this project
+
+The dynamic stochastic synapse is exactly what this state-of-the-art model
+abstracts away. That converts Neural Accord's question from *build a
+biologically constrained cortical model* — done, better — into something
+sharper and genuinely open:
+
+> **Does putting the synapse back in change what the circuit learns?**
+
+Their own method supplies the template. They report that *removing* biological
+priors on synaptic weight distributions preserves functional activity while
+disrupting emergent wiring rules. The converse has not been run: *add*
+state-dependent release, facilitation and depression, and ask whether the
+inhibitory cohort structure that training discovers still forms.
+
+This also restates **H1** at a level worth defending. Not "redundancy emerges
+under fixed noise" — published — but "does state-dependent transmission change
+the wiring rules a data-constrained circuit converges on?"
+
+And it supplies the interchangeable, representation-rich backend the interface
+redesign needs, in biological rather than language-model form: two instances of a
+data-constrained cortical circuit, differentiable, communicating through a
+constrained interface.
+
+### Audit failure worth recording
+
+This preprint did not surface in sections 1–6, which searched the machine-learning
+and emergent-communication literature. Nobody searched for *who has already built
+this project's Level 3*. Any future audit must cover the computational-neuroscience
+circuit-modelling literature explicitly — Allen Institute, Blue Brain, and the
+differentiable-simulator line — not only the ML side.
+
 ## What this implies for sequencing
 
 - **Level 0** — keep, relabelled as the control condition. Done.
-- **H1** — needs the dynamic-synapse comparison to stay distinct from Vital et al.
+- **Level 3** — do not build. Adopt the Allen differentiable V1 model and work
+  against it.
+- **H1** — restate as a question about a real circuit: does state-dependent
+  transmission change the wiring rules training converges on? Fixed-noise
+  redundancy is already published.
 - **H6** — benchmark against FALCON rather than proposing a parallel framework;
   narrow the claim to mechanism.
 - **H4** — the strongest open claim, and the least built.
-- **The interface redesign** — enters an active field, so it needs the biological
-  constraint and the developmental trace to be more than a re-entry.
+- **The interface redesign** — now has a biological backend available, which is a
+  stronger position than a language-model one and closer to the project's stated
+  target.
 
 ## Maintaining this document
 
