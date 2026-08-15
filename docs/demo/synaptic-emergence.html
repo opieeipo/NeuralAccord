@@ -1398,9 +1398,15 @@
     $("s-accc").textContent = accC == null ? "—" : accC.toFixed(3);
     $("s-chance").textContent = chance.toFixed(3);
 
-    const [rg, rs] = regime(acc, chance);
+    // Classified on comms-only accuracy, never on overall. Overall includes
+    // private episodes, which are free wins the channel did not earn, so
+    // classifying on it lets the tile report a stable convention while the
+    // pair ignores the channel completely: private 0.90 with erasure 0.90
+    // reads 0.885 overall against 0.145 through the channel.
+    const basis = accC == null ? acc : accC;
+    const [rg, rs] = regime(basis, chance);
     $("s-regime").textContent = rg;
-    $("s-regime-sub").textContent = rs || " ";
+    $("s-regime-sub").textContent = rs ? rs + " · comms only" : " ";
 
     $("t-deliv").textContent = t[0].toLocaleString();
     $("t-sil").textContent = t[1].toLocaleString();
