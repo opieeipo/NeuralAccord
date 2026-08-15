@@ -730,6 +730,11 @@
               <span class="tile-sub">private excluded</span>
             </div>
             <div class="tile">
+              <span class="tile-label">Channel ceiling</span>
+              <span class="tile-value" id="s-ceiling">—</span>
+              <span class="tile-sub" id="s-ceiling-sub">best possible here</span>
+            </div>
+            <div class="tile">
               <span class="tile-label">Regime</span>
               <span class="tile-value" id="s-regime" style="font-size:.95rem">—</span>
               <span class="tile-sub" id="s-regime-sub">&nbsp;</span>
@@ -815,6 +820,29 @@
       by a reward-modulated rule with a running baseline. Neither is told what any symbol means.
     </p>
 
+    <h3>Reading the regime</h3>
+    <p>
+      The regime is judged against what this channel makes possible, not against a perfect score.
+      That ceiling is derived from the parameters rather than measured: a delivered symbol resolves
+      the meaning — or the group of meanings sharing it, when the vocabulary is smaller than the
+      meaning set — an erased one leaves the receiver guessing, and a corrupted one points
+      confidently at the wrong answer. At the page defaults it comes to <code>0.63</code>, so a run
+      sitting there has finished rather than stalled.
+    </p>
+    <p>
+      Because accuracy is reported as a rolling mean over 400 episodes, it drifts a little either
+      side of that figure — seeing <code>0.65</code> against a ceiling of <code>0.63</code> is
+      sampling noise, not a broken bound. The percentage is clamped at 100 for that reason. Where
+      the ceiling sits within a few points of chance there is nothing left to measure, and the
+      regime says so instead of grading the pair on noise.
+    </p>
+    <p>
+      Measuring against the ceiling separates two things a bare accuracy figure runs together: how
+      much the channel permits, and how much of that the pair actually captured. Raising the erasure
+      rate lowers the first while saying nothing about the second, and only the second is a claim
+      about coordination.
+    </p>
+
     <h3>Why private observation excludes the update</h3>
     <p>
       When the receiver independently observes the state, it answers correctly no matter what was
@@ -826,8 +854,9 @@
 
     <h3>Things worth trying</h3>
     <ul>
-      <li>Push erasure past <code>0.6</code> at budget 1 and watch coordination sit near chance —
-        the collapse regime is a result, not a failure to report.</li>
+      <li>Push erasure past <code>0.6</code> at budget 1. Accuracy falls toward chance while the
+        regime stays high: what collapsed is the channel's capacity, not the pair's competence.
+        Both belong in a report, and one number cannot carry them.</li>
       <li>Then set budget to 2. Under heavy erasure the sender often learns to spend both slots on
         the same symbol. Redundancy emerging from unreliable transmission is what
         <strong>H1</strong> predicts, and you can watch it happen.</li>
@@ -1378,13 +1407,70 @@
 
   /* ---------------- numeric readouts ---------------- */
 
-  function regime(acc, chance) {
+  // The best accuracy any strategy could reach through this channel, derived
+  // from the parameters rather than measured -- so it does not drift with how
+  // long the run has been going, and a converged run is distinguishable from a
+  // stalled one. Private observation is excluded: the regime is judged on
+  // comms-only accuracy, so the ceiling has to be a comms-only ceiling too.
+  //
+  // Validated against the simulation across erasure, substitution, vocabulary,
+  // meaning-count and budget sweeps; it bounds every one from above.
+  function channelCeiling(cfg) {
+    const { K, V, B, pE, pS } = cfg;
+    const chance = 1 / K;
+    const pD = (1 - pE) * (1 - pS);   // arrives intact
+    const pSub = (1 - pE) * pS;       // arrives corrupted
+
+    // Usually the receiver should take an arriving symbol at face value. When
+    // substitution is severe enough, the likeliest sent symbol is a different
+    // one and it should decode away from what arrived instead.
+    const trust = V > 1 ? Math.max(1 - pS, pS / (V - 1)) : 1;
+
+    // With fewer symbols than meanings, some meanings must share one and the
+    // receiver can only guess inside that group. However the meanings are
+    // split, that averages out to V/K.
+    const dOne = Math.min(1, V / K);
+
+    // Always available: ignore the channel and guess.
+    const guess = chance;
+
+    if (B === 1) {
+      return Math.max(guess, (1 - pE) * trust * dOne + pE * chance);
+    }
+
+    // Budget 2, repetition: send the same symbol twice. Survives a single
+    // erasure outright; a single corruption leaves two candidates and a coin
+    // flip between them.
+    const repeat = dOne * (pD * pD + 2 * pD * pE + pD * pSub) + chance * pE * pE;
+
+    // Budget 2, spreading: treat the ordered pair as a wider code. Buys
+    // capacity when the vocabulary is smaller than the meaning set, but needs
+    // both halves to survive.
+    const dPair = Math.min(1, (V * V) / K);
+    const spread = dPair * Math.pow((1 - pE) * trust, 2) + chance * pE * pE;
+
+    return Math.max(guess, repeat, spread);
+  }
+
+  // Judged against what this channel permits, not against a perfect score. A
+  // run sitting at the ceiling has finished; the old version measured against
+  // 1.0 and so called a converged run "consolidating" forever.
+  function regime(acc, chance, ceiling) {
     if (acc == null) return ["—", ""];
-    const lift = (acc - chance) / (1 - chance);
+    const room = ceiling - chance;
+
+    // Below this much headroom the question stops being answerable rather than
+    // becoming a "no": accuracy is reported as a rolling mean over 400
+    // episodes, whose standard error is around 0.02, so a ceiling only a few
+    // points above chance yields a ratio made almost entirely of noise. Saying
+    // the channel carries nothing is honest; grading a convention on it is not.
+    const MIN_ROOM = 0.05;
+    if (room < MIN_ROOM) return ["No capacity", "channel permits almost nothing"];
+    const lift = Math.max(0, Math.min(1, (acc - chance) / room));
     if (lift < 0.08) return ["Collapse", "at or near chance"];
     if (lift < 0.4) return ["Partial", "weak, unstable convention"];
     if (lift < 0.8) return ["Forming", "convention consolidating"];
-    return ["Coordinated", "stable convention"];
+    return ["Coordinated", "at the channel's limit"];
   }
 
   function paint() {
@@ -1403,10 +1489,20 @@
     // classifying on it lets the tile report a stable convention while the
     // pair ignores the channel completely: private 0.90 with erasure 0.90
     // reads 0.885 overall against 0.145 through the channel.
+    const ceiling = channelCeiling(cfg);
+    $("s-ceiling").textContent = ceiling.toFixed(3);
+
     const basis = accC == null ? acc : accC;
-    const [rg, rs] = regime(basis, chance);
+    const [rg, rs] = regime(basis, chance, ceiling);
     $("s-regime").textContent = rg;
     $("s-regime-sub").textContent = rs ? rs + " · comms only" : " ";
+
+    const reached =
+      basis == null || ceiling - chance <= 1e-6
+        ? null
+        : Math.max(0, Math.min(1, (basis - chance) / (ceiling - chance)));
+    $("s-ceiling-sub").textContent =
+      reached == null ? "best possible here" : Math.round(reached * 100) + "% of it reached";
 
     $("t-deliv").textContent = t[0].toLocaleString();
     $("t-sil").textContent = t[1].toLocaleString();

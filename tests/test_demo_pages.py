@@ -148,6 +148,30 @@ function run(overrides, episodes) {
   return { acc: sys.accuracy, comm: sys.commAccuracy, chance: 1 / cfg.K };
 }
 
+// the ceiling and regime functions exactly as the page defines them
+const fnStart = html.indexOf("  // The best accuracy any strategy could reach");
+const fnEnd = html.indexOf("  function paint()");
+const { channelCeiling, regime } = new Function(
+  html.slice(fnStart, fnEnd) + "\\nreturn { channelCeiling, regime };"
+)();
+
+function bound(overrides, episodes, seeds) {
+  const cfg = { K: 8, V: 8, B: 1, pE: 0, pS: 0, pPriv: 0, lr: 0.08, ...overrides };
+  let acc = 0;
+  for (let i = 0; i < seeds; i++) {
+    const sys = makeSystem(cfg, "pair", 1042 + i * 7919);
+    sys.run(episodes, false);
+    acc += sys.accuracy;
+  }
+  return { acc: acc / seeds, ceiling: channelCeiling(cfg), chance: 1 / cfg.K };
+}
+
+const SWEEP = [
+  {}, { pE: 0.15 }, { pE: 0.3, pS: 0.15 }, { pE: 0.5, pS: 0.2 },
+  { pS: 0.5 }, { V: 2 }, { V: 4 }, { K: 2 }, { V: 12, K: 4 },
+  { B: 2 }, { B: 2, pE: 0.65 }, { B: 2, pE: 0.3, pS: 0.15 }, { B: 2, V: 2 },
+];
+
 const out = {
   clean: run({}, 60000),
   noComms: run({ mode: "none" }, 60000),
@@ -155,6 +179,13 @@ const out = {
   budget1: run({ pE: 0.65, B: 1 }, 60000),
   budget2: run({ pE: 0.65, B: 2 }, 60000),
   deadChannelPrivate: run({ pE: 0.9, pPriv: 0.9 }, 60000),
+  sweep: SWEEP.map((o) => ({ cfg: o, ...bound(o, o.B === 2 ? 120000 : 90000, 3) })),
+  labels: {
+    converged: regime(0.632, 0.125, channelCeiling({ K: 8, V: 8, B: 1, pE: 0.3, pS: 0.15 }))[0],
+    early: regime(0.20, 0.125, channelCeiling({ K: 8, V: 8, B: 1, pE: 0.3, pS: 0.15 }))[0],
+    atChance: regime(0.125, 0.125, channelCeiling({ K: 8, V: 8, B: 1, pE: 0.3, pS: 0.15 }))[0],
+    noCapacity: regime(0.147, 0.125, channelCeiling({ K: 8, V: 8, B: 1, pE: 0.9, pS: 0.6 }))[0],
+  },
 };
 console.log(JSON.stringify(out));
 """
@@ -210,7 +241,12 @@ def test_regime_is_classified_on_comms_only(sim: dict) -> None:
     """Guards the specific defect: classifying on overall accuracy made the
     dead-channel case read 'Coordinated' instead of 'Collapse'."""
     source = LEVEL0.read_text(encoding="utf-8")
-    assert "regime(basis, chance)" in source, "regime must be computed from the comms-only basis"
+    assert "const basis = accC == null ? acc : accC;" in source, (
+        "the regime basis must be the comms-only figure"
+    )
+    assert "regime(basis, chance, ceiling)" in source, (
+        "regime must be called with that basis, not overall accuracy"
+    )
 
     case = sim["deadChannelPrivate"]
     chance = case["chance"]
@@ -218,3 +254,39 @@ def test_regime_is_classified_on_comms_only(sim: dict) -> None:
     lift_comms = (case["comm"] - chance) / (1 - chance)
     assert lift_overall >= 0.8, "this case should look 'Coordinated' on overall accuracy"
     assert lift_comms < 0.08, "and 'Collapse' on comms-only, which is what must be shown"
+
+
+def test_ceiling_bounds_the_simulation(sim: dict) -> None:
+    """The analytic ceiling must be an upper bound the learner approaches but
+    never passes. A ceiling that a run can exceed would make the regime
+    meaningless; one far above the run would make it unreachable."""
+    over: list[str] = []
+    slack: list[str] = []
+    for case in sim["sweep"]:
+        # 1 SE of the page's 400-episode rolling mean is about 0.025.
+        if case["acc"] > case["ceiling"] + 0.03:
+            over.append(f"{case['cfg']}: {case['acc']:.3f} > ceiling {case['ceiling']:.3f}")
+        room = case["ceiling"] - case["chance"]
+        if room > 0.05:
+            reached = (case["acc"] - case["chance"]) / room
+            if reached < 0.7:
+                slack.append(f"{case['cfg']}: reached only {reached:.0%} of ceiling")
+    assert not over, "ceiling is not an upper bound: " + "; ".join(over)
+    assert not slack, "ceiling is unreachably loose: " + "; ".join(slack)
+
+
+def test_converged_run_at_defaults_reads_as_coordinated(sim: dict) -> None:
+    """The defect this replaced: measuring against 1.0 meant a run sitting at
+    the channel's ceiling was labelled 'convention consolidating' forever."""
+    assert sim["labels"]["converged"] == "Coordinated"
+
+
+def test_regime_still_distinguishes_early_and_chance_runs(sim: dict) -> None:
+    assert sim["labels"]["early"] == "Partial"
+    assert sim["labels"]["atChance"] == "Collapse"
+
+
+def test_negligible_capacity_is_not_graded(sim: dict) -> None:
+    """When the ceiling sits within noise of chance the ratio is meaningless,
+    so the regime reports the channel rather than grading the pair."""
+    assert sim["labels"]["noCapacity"] == "No capacity"
