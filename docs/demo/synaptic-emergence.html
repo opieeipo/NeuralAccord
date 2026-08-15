@@ -837,6 +837,13 @@
       regime says so instead of grading the pair on noise.
     </p>
     <p>
+      That same noise is why the label is deliberately sticky. A boundary has to be overshot before
+      the regime moves up and undershot before it falls back, so a run climbing past one settles
+      once rather than flickering between two labels for thousands of episodes. Raising the number
+      of meanings makes this most visible: learning slows, the run lingers near a boundary, and
+      without the margin the tile would twitch the whole way through.
+    </p>
+    <p>
       Measuring against the ceiling separates two things a bare accuracy figure runs together: how
       much the channel permits, and how much of that the pair actually captured. Raising the erasure
       rate lowers the first while saying nothing about the second, and only the second is a claim
@@ -1063,6 +1070,7 @@
   const MAX_POINTS = 900;
   let sampleEvery = 25;
   let running = false, raf = 0, sinceSample = 0;
+  let regimeBand = null;   // sticky band for the hysteresis above; cleared by build()
 
   const $ = (id) => document.getElementById(id);
 
@@ -1077,6 +1085,7 @@
     history = [];
     sinceSample = 0;
     sampleEvery = 25;
+    regimeBand = null;
     record();
   }
 
@@ -1452,25 +1461,52 @@
     return Math.max(guess, repeat, spread);
   }
 
+  const REGIME_BANDS = [
+    { below: 0.08, name: "Collapse", sub: "at or near chance" },
+    { below: 0.40, name: "Partial", sub: "weak, unstable convention" },
+    { below: 0.80, name: "Forming", sub: "convention consolidating" },
+    { below: Infinity, name: "Coordinated", sub: "at the channel's limit" }
+  ];
+
+  // The lift estimate is built from a 400-episode rolling mean and carries
+  // roughly ±0.05 of sampling noise. Against a bare threshold that makes the
+  // label chatter every time a run climbs past one -- which is most visible at
+  // higher meaning counts, where learning is slow enough to sit near a boundary
+  // for a long time. So each boundary must be overshot by this margin to move
+  // up and undershot by it to fall back; in between, the label holds.
+  const BAND_MARGIN = 0.05;
+
+  function settleBand(lift, previous) {
+    let band = 0;
+    while (band < REGIME_BANDS.length - 1 && lift >= REGIME_BANDS[band].below) band++;
+    if (previous == null || band === previous) return band;
+    if (band > previous) {
+      return lift >= REGIME_BANDS[previous].below + BAND_MARGIN ? band : previous;
+    }
+    return lift < REGIME_BANDS[band].below - BAND_MARGIN ? band : previous;
+  }
+
   // Judged against what this channel permits, not against a perfect score. A
-  // run sitting at the ceiling has finished; the old version measured against
-  // 1.0 and so called a converged run "consolidating" forever.
-  function regime(acc, chance, ceiling) {
-    if (acc == null) return ["—", ""];
+  // run sitting at the ceiling has finished; measuring against 1.0 instead
+  // called a converged run "consolidating" forever.
+  //
+  // Pure: the caller owns the previous band, so the sticky behaviour can be
+  // tested and so changing a parameter starts the classification fresh.
+  function regime(acc, chance, ceiling, previousBand = null) {
+    if (acc == null) return ["—", "", null];
     const room = ceiling - chance;
 
     // Below this much headroom the question stops being answerable rather than
-    // becoming a "no": accuracy is reported as a rolling mean over 400
-    // episodes, whose standard error is around 0.02, so a ceiling only a few
-    // points above chance yields a ratio made almost entirely of noise. Saying
-    // the channel carries nothing is honest; grading a convention on it is not.
+    // becoming a "no": the standard error of the reported accuracy is around
+    // 0.02, so a ceiling only a few points above chance yields a ratio made
+    // almost entirely of noise. Saying the channel carries nothing is honest;
+    // grading a convention on it is not.
     const MIN_ROOM = 0.05;
-    if (room < MIN_ROOM) return ["No capacity", "channel permits almost nothing"];
+    if (room < MIN_ROOM) return ["No capacity", "channel permits almost nothing", null];
+
     const lift = Math.max(0, Math.min(1, (acc - chance) / room));
-    if (lift < 0.08) return ["Collapse", "at or near chance"];
-    if (lift < 0.4) return ["Partial", "weak, unstable convention"];
-    if (lift < 0.8) return ["Forming", "convention consolidating"];
-    return ["Coordinated", "at the channel's limit"];
+    const band = settleBand(lift, previousBand);
+    return [REGIME_BANDS[band].name, REGIME_BANDS[band].sub, band];
   }
 
   function paint() {
@@ -1493,7 +1529,8 @@
     $("s-ceiling").textContent = ceiling.toFixed(3);
 
     const basis = accC == null ? acc : accC;
-    const [rg, rs] = regime(basis, chance, ceiling);
+    const [rg, rs, band] = regime(basis, chance, ceiling, regimeBand);
+    regimeBand = band;
     $("s-regime").textContent = rg;
     $("s-regime-sub").textContent = rs ? rs + " · comms only" : " ";
 

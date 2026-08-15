@@ -8,6 +8,7 @@ could have caught it, so these tests do.
 
 from __future__ import annotations
 
+import itertools
 import re
 import shutil
 import subprocess
@@ -186,6 +187,41 @@ const out = {
     atChance: regime(0.125, 0.125, channelCeiling({ K: 8, V: 8, B: 1, pE: 0.3, pS: 0.15 }))[0],
     noCapacity: regime(0.147, 0.125, channelCeiling({ K: 8, V: 8, B: 1, pE: 0.9, pS: 0.6 }))[0],
   },
+  hysteresis: (() => {
+    const cfg = { K: 8, V: 8, B: 1, pE: 0.3, pS: 0.15 };
+    const chance = 1 / cfg.K;
+    const ceiling = channelCeiling(cfg);
+    const at = (lift) => chance + lift * (ceiling - chance);
+    const label = (lift, band) => regime(at(lift), chance, ceiling, band);
+
+    // walk a noisy climb through the Forming/Coordinated boundary
+    let band = null;
+    const climb = [];
+    for (const lift of [0.5, 0.78, 0.82, 0.79, 0.83, 0.86, 0.9, 0.84, 0.78, 0.74, 0.6]) {
+      const r = label(lift, band);
+      band = r[2];
+      climb.push(r[0]);
+    }
+
+    // a run that never left the bottom must still read as collapsed
+    let low = null;
+    const floor = [];
+    for (const lift of [0.02, 0.09, 0.05, 0.11, 0.03]) {
+      const r = label(lift, low);
+      low = r[2];
+      floor.push(r[0]);
+    }
+
+    return {
+      climb,
+      floor,
+      freshAt082: label(0.82, null)[0],
+      stickyAt082: label(0.82, 2)[0],
+      promotedAt086: label(0.86, 2)[0],
+      stickyAt078: label(0.78, 3)[0],
+      demotedAt072: label(0.72, 3)[0],
+    };
+  })(),
 };
 console.log(JSON.stringify(out));
 """
@@ -244,7 +280,7 @@ def test_regime_is_classified_on_comms_only(sim: dict) -> None:
     assert "const basis = accC == null ? acc : accC;" in source, (
         "the regime basis must be the comms-only figure"
     )
-    assert "regime(basis, chance, ceiling)" in source, (
+    assert "regime(basis, chance, ceiling, regimeBand)" in source, (
         "regime must be called with that basis, not overall accuracy"
     )
 
@@ -290,3 +326,33 @@ def test_negligible_capacity_is_not_graded(sim: dict) -> None:
     """When the ceiling sits within noise of chance the ratio is meaningless,
     so the regime reports the channel rather than grading the pair."""
     assert sim["labels"]["noCapacity"] == "No capacity"
+
+
+def test_regime_does_not_chatter_across_a_boundary(sim: dict) -> None:
+    """A noisy climb through the Forming/Coordinated boundary must produce one
+    transition, not a run of flips. The lift estimate carries about +/-0.05 of
+    sampling noise, so a bare threshold flickers whenever a run is passing one --
+    most visibly at high meaning counts, where learning lingers near a boundary.
+    """
+    climb = sim["hysteresis"]["climb"]
+    changes = sum(1 for a, b in itertools.pairwise(climb) if a != b)
+    assert changes <= 2, f"label changed {changes} times over one climb: {climb}"
+
+
+def test_hysteresis_needs_an_overshoot_to_promote(sim: dict) -> None:
+    h = sim["hysteresis"]
+    assert h["stickyAt082"] == "Forming", "0.82 should not yet promote from Forming"
+    assert h["promotedAt086"] == "Coordinated", "0.86 should promote"
+    assert h["freshAt082"] == "Coordinated", "with no prior band, 0.82 classifies plainly"
+
+
+def test_hysteresis_needs_an_undershoot_to_demote(sim: dict) -> None:
+    h = sim["hysteresis"]
+    assert h["stickyAt078"] == "Coordinated", "0.78 should not yet demote"
+    assert h["demotedAt072"] == "Forming", "0.72 should demote"
+
+
+def test_a_run_at_the_floor_still_reads_as_collapse(sim: dict) -> None:
+    """Stickiness must not suppress the collapse label -- the project reports
+    collapse regimes as results, so they cannot be smoothed away."""
+    assert set(sim["hysteresis"]["floor"]) == {"Collapse"}, sim["hysteresis"]["floor"]
